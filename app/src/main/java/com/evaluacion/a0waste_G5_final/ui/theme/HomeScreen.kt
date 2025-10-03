@@ -1,10 +1,12 @@
-package com.evaluacion.a0waste_G5_final.ui.theme
+package com.evaluacion.a0waste_G5_final.ui.Screens
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.*
+import androidx.compose.material3.windowsizeclass.WindowSizeClass
+import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -13,37 +15,37 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import com.evaluacion.a0waste_G5_final.ui.theme.Utils.rememberWindowSizeClass
-import com.evaluacion.a0waste_G5_final.ui.theme.Utils.WindowType
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun HomeScreen(navController: NavController? = null) {
-    val windowSize = rememberWindowSizeClass()
-
+fun HomeScreen(
+    navController: NavController? = null,
+    windowSizeClass: WindowSizeClass
+) {
     Scaffold(
         topBar = {
             TopAppBar(
                 title = {
                     Text(
-                        text = if (windowSize.widthSizeClass == WindowType.COMPACT)
-                            "0Waste"
-                        else
-                            "0Waste - Reciclaje Inteligente"
+                        text = when (windowSizeClass.widthSizeClass) {
+                            WindowWidthSizeClass.Compact -> "0Waste"
+                            WindowWidthSizeClass.Medium -> "0Waste Reciclaje"
+                            else -> "0Waste - Reciclaje Inteligente"
+                        }
                     )
                 }
             )
         }
     ) { innerPadding ->
-        when (windowSize.widthSizeClass) {
-            WindowType.COMPACT -> CompactHomeScreen(navController, innerPadding)
-            WindowType.MEDIUM -> MediumHomeScreen(navController, innerPadding)
-            WindowType.EXPANDED -> ExpandedHomeScreen(navController, innerPadding)
+        when (windowSizeClass.widthSizeClass) {
+            WindowWidthSizeClass.Compact -> CompactHomeScreen(navController, innerPadding)
+            WindowWidthSizeClass.Medium -> MediumHomeScreen(navController, innerPadding)
+            else -> ExpandedHomeScreen(navController, innerPadding)
         }
     }
 }
 
-// PANTALLA COMPACTA (Móviles pequeños) - BASADO EN TU CÓDIGO ACTUAL
+// PANTALLA COMPACTA (Móviles pequeños)
 @Composable
 fun CompactHomeScreen(
     navController: NavController?,
@@ -67,37 +69,27 @@ fun CompactHomeScreen(
             style = MaterialTheme.typography.bodyMedium
         )
 
-        // Botón para escanear residuos
         Button(
-            onClick = {
-                navController?.navigate("scan")
-            },
+            onClick = { navController?.navigate("scan") },
             modifier = Modifier.fillMaxWidth()
         ) {
             Text("Escanear Residuos")
         }
 
-        // Botón para centros de reciclaje
         Button(
-            onClick = {
-                navController?.navigate("centers")
-            },
+            onClick = { navController?.navigate("centers") },
             modifier = Modifier.fillMaxWidth()
         ) {
             Text("Centros de Reciclaje")
         }
 
-        // Botón para recompensas
         Button(
-            onClick = {
-                navController?.navigate("rewards")
-            },
+            onClick = { navController?.navigate("rewards") },
             modifier = Modifier.fillMaxWidth()
         ) {
             Text("Mis Recompensas")
         }
 
-        // Imagen placeholder
         Image(
             painter = painterResource(id = android.R.drawable.ic_menu_gallery),
             contentDescription = "Logo 0Waste",
@@ -107,7 +99,6 @@ fun CompactHomeScreen(
             contentScale = ContentScale.Fit
         )
 
-        // Materiales reciclables (nuevo para la Guía 9)
         WasteItemsListCompact()
     }
 }
@@ -148,7 +139,6 @@ fun MediumHomeScreen(
             )
         }
 
-        // Botones en filas
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.spacedBy(16.dp)
@@ -179,7 +169,6 @@ fun MediumHomeScreen(
                 Text("Mis Recompensas")
             }
 
-            // Botón extra para tablets
             Button(
                 onClick = { /* Estadísticas */ },
                 modifier = Modifier.weight(1f)
@@ -203,7 +192,6 @@ fun ExpandedHomeScreen(
             .padding(innerPadding)
             .fillMaxSize()
     ) {
-        // Panel izquierdo - Navegación
         Column(
             modifier = Modifier
                 .width(300.dp)
@@ -262,7 +250,6 @@ fun ExpandedHomeScreen(
             }
         }
 
-        // Panel derecho - Contenido
         Column(
             modifier = Modifier
                 .weight(1f)
@@ -280,7 +267,7 @@ fun ExpandedHomeScreen(
     }
 }
 
-// LISTAS ADAPTABLES PARA MATERIALES (NUEVO PARA GUÍA 9)
+// LISTAS ADAPTABLES
 @Composable
 fun WasteItemsListCompact() {
     val wasteItems = listOf(
@@ -359,7 +346,7 @@ fun WasteItemsListExpanded() {
     }
 }
 
-// PREVIEWS PARA CADA TAMAÑO (GUÍA 9)
+// PREVIEWS
 @Preview(showBackground = true, widthDp = 360, heightDp = 640)
 @Composable
 fun CompactHomeScreenPreview() {
@@ -376,11 +363,4 @@ fun MediumHomeScreenPreview() {
 @Composable
 fun ExpandedHomeScreenPreview() {
     ExpandedHomeScreen(navController = null, innerPadding = PaddingValues())
-}
-
-// Preview original que tenías
-@Preview(showBackground = true)
-@Composable
-fun HomeScreenPreview() {
-    HomeScreen()
 }
