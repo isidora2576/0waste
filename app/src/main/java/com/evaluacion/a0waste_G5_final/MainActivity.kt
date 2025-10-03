@@ -9,6 +9,8 @@ import androidx.compose.material3.windowsizeclass.calculateWindowSizeClass
 import androidx.compose.material3.windowsizeclass.WindowSizeClass
 import androidx.compose.material3.Text
 import androidx.compose.ui.Modifier
+import androidx.compose.runtime.LaunchedEffect
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.material3.Scaffold
 import androidx.compose.foundation.layout.fillMaxSize
@@ -18,7 +20,15 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.evaluacion.a0waste_G5_final.ui.Screens.HomeScreen
+import com.evaluacion.a0waste_G5_final.Navigation.Screen
+import com.evaluacion.a0waste_G5_final.ui.theme.Screens.ProfileScreen
+import com.evaluacion.a0waste_G5_final.ui.theme.Screens.ScanScreen
+import com.evaluacion.a0waste_G5_final.ui.theme.Screens.CentersScreen
+import com.evaluacion.a0waste_G5_final.ui.theme.Screens.RewardsScreen
+import com.evaluacion.a0waste_G5_final.Viewmodel.WasteViewModel
+import com.evaluacion.a0waste_G5_final.Viewmodel.NavigationEvent
 import com.evaluacion.a0waste_G5_final.ui.theme._0waste_G5Theme
+import kotlinx.coroutines.flow.collectLatest
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
