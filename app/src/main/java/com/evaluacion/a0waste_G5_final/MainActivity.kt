@@ -4,13 +4,11 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Scaffold
+import androidx.navigation.compose.NavHost
 import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
+import com.evaluacion.a0waste_G5_final.ui.theme.HomeScreen
 import com.evaluacion.a0waste_G5_final.ui.theme._0waste_G5Theme
 
 class MainActivity : ComponentActivity() {
@@ -19,29 +17,30 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             _0waste_G5Theme {
-                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    Greeting(
-                        name = "Android",
-                        modifier = Modifier.padding(innerPadding)
-                    )
+                val navController = rememberNavController()
+
+                NavHost(
+                    navController = navController,
+                    startDestination = "home"
+                ) {
+                    composable("home") {
+                        HomeScreen(navController = navController)
+                    }
+                    // Pantallas temporales para que funcione la navegación
+                    composable("scan") {
+                        // Pantalla temporal de escaneo
+                        Text("Pantalla de Escaneo - En desarrollo")
+                    }
+                    composable("centers") {
+                        // Pantalla temporal de centros
+                        Text("Pantalla de Centros - En desarrollo")
+                    }
+                    composable("rewards") {
+                        // Pantalla temporal de recompensas
+                        Text("Pantalla de Recompensas - En desarrollo")
+                    }
                 }
             }
         }
-    }
-}
-
-@Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "Hello $name!",
-        modifier = modifier
-    )
-}
-
-@Preview(showBackground = true)
-@Composable
-fun GreetingPreview() {
-    _0waste_G5Theme {
-        Greeting("Android")
     }
 }
