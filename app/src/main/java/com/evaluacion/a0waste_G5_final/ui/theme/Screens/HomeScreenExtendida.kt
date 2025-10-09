@@ -31,7 +31,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.evaluacion.a0waste_G5_final.R
+import com.evaluacion.a0waste.R
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

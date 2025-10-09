@@ -14,7 +14,7 @@ import androidx.navigation.NavController
 fun CentersScreen(navController: NavController? = null) {
     Scaffold(
         topBar = {
-            TopAppBar(title = { Text("Centros de Reciclaje ♻️") })
+            TopAppBar(title = { Text("Centros de Reciclaje") })
         }
     ) { innerPadding ->
         Column(
