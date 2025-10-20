@@ -1,6 +1,5 @@
-package com.evaluacion.a0waste_G5_final.ui.theme
+package com.evaluacion.a0waste_G5_final.ui.theme.Theme
 
-import android.app.Activity
 import android.os.Build
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme

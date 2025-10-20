@@ -5,6 +5,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -31,20 +32,21 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
 import com.evaluacion.a0waste.R
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun HomeScreenExpandida() {
+fun HomeScreenExpandida(navController: NavController? = null) {
     Scaffold(
         topBar = {
             TopAppBar(
                 title = {
                     Text(
-                        text = "0Waste, Reciclar y ahorrar es posible",
+                        text = "0Waste - Plataforma de Reciclaje Inteligente",
                         color = Color.White,
                         fontWeight = FontWeight.Bold,
-                        fontSize = 28.sp //
+                        fontSize = 24.sp
                     )
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
@@ -62,77 +64,139 @@ fun HomeScreenExpandida() {
         ) {
             Column(
                 modifier = Modifier
-                    .fillMaxSize()
-                    .padding(64.dp), // Máximo padding
+                    .fillMaxWidth(0.8f)
+                    .padding(60.dp),
                 horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.Center
+                verticalArrangement = Arrangement.spacedBy(32.dp, Alignment.CenterVertically)
             ) {
+                // Logo muy grande
                 Image(
                     painter = painterResource(id = R.drawable.logo),
                     contentDescription = "Logo 0Waste",
-                    modifier = Modifier
-                        .height(400.dp) // Logo más grande para pantallas grandes
-                        .padding(bottom = 60.dp),
+                    modifier = Modifier.size(320.dp),
                     contentScale = ContentScale.Fit
                 )
 
-                Text(
-                    text = "Bienvenido a 0Waste",
-                    color = Color.White,
-                    style = MaterialTheme.typography.displayLarge,
-                    fontWeight = FontWeight.Bold,
-                    textAlign = TextAlign.Center,
-                    modifier = Modifier.padding(bottom = 16.dp)
-                )
-
-                Button(
-                    onClick = { /* acción iniciar sesión */ },
-                    modifier = Modifier
-                        .fillMaxWidth(0.6f) // Botón más angosto
-                        .height(64.dp), // Botón más alto
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = Color.White,
-                        contentColor = Color(0xFF4CAF50)
-                    ),
-                    elevation = ButtonDefaults.buttonElevation(
-                        defaultElevation = 8.dp
-                    )
+                // Títulos centrados
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     Text(
-                        text = "Iniciar sesión",
+                        text = "Transforma tu reciclaje",
+                        color = Color.White,
+                        style = MaterialTheme.typography.displayLarge,
                         fontWeight = FontWeight.Bold,
-                        fontSize = 20.sp // Texto más grande
+                        textAlign = TextAlign.Center
+                    )
+
+                    Text(
+                        text = "en recompensas reales",
+                        color = Color.White,
+                        style = MaterialTheme.typography.displayMedium,
+                        fontWeight = FontWeight.Bold,
+                        textAlign = TextAlign.Center,
+                        modifier = Modifier.padding(top = 8.dp)
+                    )
+
+                    Text(
+                        text = "Toma fotos de evidencias de reciclaje y acumula puntos para canjear por descuentos en establecimientos asociados",
+                        color = Color.White.copy(alpha = 0.9f),
+                        style = MaterialTheme.typography.headlineMedium,
+                        textAlign = TextAlign.Center,
+                        modifier = Modifier.padding(top = 24.dp)
                     )
                 }
 
-                Spacer(modifier = Modifier.height(24.dp))
-
-                OutlinedButton(
-                    onClick = { /* acción crear cuenta */ },
-                    modifier = Modifier
-                        .fillMaxWidth(0.6f)
-                        .height(64.dp),
-                    colors = ButtonDefaults.outlinedButtonColors(
-                        contentColor = Color.White
-                    ),
-                    border = ButtonDefaults.outlinedButtonBorder.copy(
-                        width = 2.dp
-                    )
+                // Botones más anchos pero proporcionales
+                Row(
+                    modifier = Modifier.fillMaxWidth(0.7f),
+                    horizontalArrangement = Arrangement.spacedBy(24.dp)
                 ) {
-                    Text(
-                        text = "Crear cuenta",
-                        fontWeight = FontWeight.Bold,
-                        fontSize = 20.sp
-                    )
+                    Button(
+                        onClick = { navController?.navigate("scan_page") },
+                        modifier = Modifier
+                            .weight(1f)
+                            .height(80.dp),
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = Color.White,
+                            contentColor = Color(0xFF4CAF50)
+                        ),
+                        elevation = ButtonDefaults.buttonElevation(defaultElevation = 8.dp)
+                    ) {
+                        Text(
+                            "Comenzar a Escanear",
+                            style = MaterialTheme.typography.titleLarge,
+                            fontWeight = FontWeight.Bold
+                        )
+                    }
+
+                    OutlinedButton(
+                        onClick = { navController?.navigate("registro_page") },
+                        modifier = Modifier
+                            .weight(1f)
+                            .height(80.dp),
+                        colors = ButtonDefaults.outlinedButtonColors(
+                            contentColor = Color.White
+                        ),
+                        border = ButtonDefaults.outlinedButtonBorder.copy(width = 2.dp)
+                    ) {
+                        Text(
+                            "Crear Cuenta",
+                            style = MaterialTheme.typography.titleLarge,
+                            fontWeight = FontWeight.Bold
+                        )
+                    }
                 }
 
-                Spacer(modifier = Modifier.height(48.dp))
-                Text(
-                    text = "Recicla y consigue descuentos",
-                    color = Color.White.copy(alpha = 0.7f),
-                    style = MaterialTheme.typography.headlineSmall,
-                    textAlign = TextAlign.Center
-                )
+                // Información adicional en landscape
+                Row(
+                    modifier = Modifier.fillMaxWidth(0.8f),
+                    horizontalArrangement = Arrangement.SpaceEvenly
+                ) {
+                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                        Text(
+                            "📸",
+                            style = MaterialTheme.typography.headlineLarge,
+                            modifier = Modifier.padding(bottom = 8.dp)
+                        )
+                        Text(
+                            "Toma foto\nde evidencia",
+                            color = Color.White,
+                            style = MaterialTheme.typography.bodyLarge,
+                            textAlign = TextAlign.Center
+                        )
+                    }
+
+                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                        Text(
+                            "⭐",
+                            style = MaterialTheme.typography.headlineLarge,
+                            modifier = Modifier.padding(bottom = 8.dp)
+                        )
+                        Text(
+                            "Gana puntos\npor material",
+                            color = Color.White,
+                            style = MaterialTheme.typography.bodyLarge,
+                            textAlign = TextAlign.Center
+                        )
+                    }
+
+                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                        Text(
+                            "🎁",
+                            style = MaterialTheme.typography.headlineLarge,
+                            modifier = Modifier.padding(bottom = 8.dp)
+                        )
+                        Text(
+                            "Canjea por descuentos",
+                            color = Color.White,
+                            style = MaterialTheme.typography.bodyLarge,
+                            textAlign = TextAlign.Center
+                        )
+                    }
+                }
+
+
             }
         }
     }

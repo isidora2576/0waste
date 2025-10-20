@@ -1,123 +1,40 @@
-package com.evaluacion.a0waste_G5_final.ui.Screens
+package com.evaluacion.a0waste_G5_final.ui.theme.Utils
 
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material3.*
-import androidx.compose.material3.windowsizeclass.WindowSizeClass
-import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Menu
-import androidx.compose.material3.ModalNavigationDrawer
-import androidx.compose.material3.DrawerValue
-import androidx.compose.material3.rememberDrawerState
-import androidx.compose.material3.ModalDrawerSheet
-import androidx.compose.material3.NavigationDrawerItem
-import androidx.compose.material3.Divider
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.Icon
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import kotlinx.coroutines.launch
+import com.evaluacion.a0waste.R
 
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun HomeScreen(
-    navController: NavController? = null,
-    windowSizeClass: WindowSizeClass
-) {
-    val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
-    val scope = rememberCoroutineScope()
-
-    ModalNavigationDrawer(
-        drawerState = drawerState,
-        drawerContent = {
-            ModalDrawerSheet {
-                Text(
-                    "Menú 0Waste",
-                    style = MaterialTheme.typography.headlineSmall,
-                    modifier = Modifier.padding(16.dp)
-                )
-                Divider()
-
-                NavigationDrawerItem(
-                    label = { Text("Inicio") },
-                    selected = true,
-                    onClick = {
-                        navController?.navigate("home_page")
-                        scope.launch { drawerState.close() }
-                    }
-                )
-                NavigationDrawerItem(
-                    label = { Text("Escanear") },
-                    selected = false,
-                    onClick = {
-                        navController?.navigate("scan_page")
-                        scope.launch { drawerState.close() }
-                    }
-                )
-                NavigationDrawerItem(
-                    label = { Text("Centros") },
-                    selected = false,
-                    onClick = {
-                        navController?.navigate("centers_page")
-                        scope.launch { drawerState.close() }
-                    }
-                )
-                NavigationDrawerItem(
-                    label = { Text("🎁 Recompensas") },
-                    selected = false,
-                    onClick = {
-                        navController?.navigate("rewards_page")
-                        scope.launch { drawerState.close() }
-                    }
-                )
-            }
-        }
-    ) {
-    Scaffold(
-        topBar = {
-            TopAppBar(
-                title = {
-                    Text(
-                        text = when (windowSizeClass.widthSizeClass) {
-                            WindowWidthSizeClass.Compact -> "0Waste"
-                            WindowWidthSizeClass.Medium -> "0Waste Reciclaje"
-                            else -> "0Waste - Reciclaje Inteligente"
-                        }
-                    )
-                },
-                navigationIcon = {
-                    IconButton(
-                        onClick = {
-                            scope.launch { drawerState.open() }
-                        }
-                    ) {
-                        Icon(
-                            Icons.Default.Menu,
-                            contentDescription = "Abrir menú"
-                        )
-                    }
-                }
-            )
-        }
-    ) { innerPadding ->
-        when (windowSizeClass.widthSizeClass) {
-            WindowWidthSizeClass.Compact -> CompactHomeScreen(navController, innerPadding)
-            WindowWidthSizeClass.Medium -> MediumHomeScreen(navController, innerPadding)
-            else -> ExpandedHomeScreen(navController, innerPadding)
-        }
-    }
-    }
-}
 // PANTALLA COMPACTA (Móviles pequeños)
 @Composable
 fun CompactHomeScreen(
@@ -128,43 +45,58 @@ fun CompactHomeScreen(
         modifier = Modifier
             .padding(innerPadding)
             .fillMaxSize()
+            .background(Color(0xFF4CAF50))
             .padding(16.dp),
         verticalArrangement = Arrangement.spacedBy(20.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Text(
             text = "¡Bienvenido a 0Waste!",
-            style = MaterialTheme.typography.headlineMedium
+            style = MaterialTheme.typography.headlineMedium,
+            color = Color.White,
+            fontWeight = FontWeight.Bold
         )
 
         Text(
             text = "Recicla, gana puntos y ayuda al planeta",
-            style = MaterialTheme.typography.bodyMedium
+            style = MaterialTheme.typography.bodyMedium,
+            color = Color.White.copy(alpha = 0.9f)
         )
 
         Button(
             onClick = { navController?.navigate("scan_page") },
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier.fillMaxWidth(),
+            colors = ButtonDefaults.buttonColors(
+                containerColor = Color.White,
+                contentColor = Color(0xFF4CAF50)
+            ),
+            elevation = ButtonDefaults.buttonElevation(defaultElevation = 8.dp)
         ) {
-            Text("Escanear Residuos")
+            Text("Escanear Residuos", fontWeight = FontWeight.Bold)
         }
 
-        Button(
+        OutlinedButton(
             onClick = { navController?.navigate("centers_page") },
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier.fillMaxWidth(),
+            colors = ButtonDefaults.outlinedButtonColors(
+                contentColor = Color.White
+            )
         ) {
-            Text("Centros de Reciclaje")
+            Text("Centros de Reciclaje", fontWeight = FontWeight.Bold)
         }
 
-        Button(
+        OutlinedButton(
             onClick = { navController?.navigate("rewards_page") },
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier.fillMaxWidth(),
+            colors = ButtonDefaults.outlinedButtonColors(
+                contentColor = Color.White
+            )
         ) {
-            Text("Mis Recompensas")
+            Text("Mis Recompensas", fontWeight = FontWeight.Bold)
         }
 
         Image(
-            painter = painterResource(id = android.R.drawable.ic_menu_gallery),
+            painter = painterResource(id = R.drawable.logo),
             contentDescription = "Logo 0Waste",
             modifier = Modifier
                 .fillMaxWidth()
@@ -186,6 +118,7 @@ fun MediumHomeScreen(
         modifier = Modifier
             .padding(innerPadding)
             .fillMaxSize()
+            .background(Color(0xFF4CAF50))
             .padding(24.dp),
         verticalArrangement = Arrangement.spacedBy(24.dp)
     ) {
@@ -197,16 +130,19 @@ fun MediumHomeScreen(
             Column {
                 Text(
                     text = "¡Bienvenido a 0Waste!",
-                    style = MaterialTheme.typography.headlineLarge
+                    style = MaterialTheme.typography.headlineLarge,
+                    color = Color.White,
+                    fontWeight = FontWeight.Bold
                 )
                 Text(
                     text = "Recicla, gana puntos y ayuda al planeta",
-                    style = MaterialTheme.typography.bodyLarge
+                    style = MaterialTheme.typography.bodyLarge,
+                    color = Color.White.copy(alpha = 0.9f)
                 )
             }
 
             Image(
-                painter = painterResource(id = android.R.drawable.ic_menu_gallery),
+                painter = painterResource(id = R.drawable.logo),
                 contentDescription = "Logo 0Waste",
                 modifier = Modifier.size(100.dp)
             )
@@ -218,16 +154,24 @@ fun MediumHomeScreen(
         ) {
             Button(
                 onClick = { navController?.navigate("scan_page") },
-                modifier = Modifier.weight(1f)
+                modifier = Modifier.weight(1f),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = Color.White,
+                    contentColor = Color(0xFF4CAF50)
+                ),
+                elevation = ButtonDefaults.buttonElevation(defaultElevation = 8.dp)
             ) {
-                Text("Escanear Residuos")
+                Text("Escanear Residuos", fontWeight = FontWeight.Bold)
             }
 
-            Button(
+            OutlinedButton(
                 onClick = { navController?.navigate("centers_page") },
-                modifier = Modifier.weight(1f)
+                modifier = Modifier.weight(1f),
+                colors = ButtonDefaults.outlinedButtonColors(
+                    contentColor = Color.White
+                )
             ) {
-                Text("Centros Reciclaje")
+                Text("Centros Reciclaje", fontWeight = FontWeight.Bold)
             }
         }
 
@@ -235,18 +179,24 @@ fun MediumHomeScreen(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-            Button(
+            OutlinedButton(
                 onClick = { navController?.navigate("rewards_page") },
-                modifier = Modifier.weight(1f)
+                modifier = Modifier.weight(1f),
+                colors = ButtonDefaults.outlinedButtonColors(
+                    contentColor = Color.White
+                )
             ) {
-                Text("Mis Recompensas")
+                Text("Mis Recompensas", fontWeight = FontWeight.Bold)
             }
 
-            Button(
+            OutlinedButton(
                 onClick = { /* Estadísticas */ },
-                modifier = Modifier.weight(1f)
+                modifier = Modifier.weight(1f),
+                colors = ButtonDefaults.outlinedButtonColors(
+                    contentColor = Color.White
+                )
             ) {
-                Text("Mi Progreso")
+                Text("Mi Progreso", fontWeight = FontWeight.Bold)
             }
         }
 
@@ -264,7 +214,9 @@ fun ExpandedHomeScreen(
         modifier = Modifier
             .padding(innerPadding)
             .fillMaxSize()
+            .background(Color(0xFF4CAF50))
     ) {
+        // Panel lateral
         Column(
             modifier = Modifier
                 .width(300.dp)
@@ -274,19 +226,22 @@ fun ExpandedHomeScreen(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Image(
-                painter = painterResource(id = android.R.drawable.ic_menu_gallery),
+                painter = painterResource(id = R.drawable.logo),
                 contentDescription = "Logo 0Waste",
                 modifier = Modifier.size(120.dp)
             )
 
             Text(
                 text = "0Waste",
-                style = MaterialTheme.typography.headlineLarge
+                style = MaterialTheme.typography.headlineLarge,
+                color = Color.White,
+                fontWeight = FontWeight.Bold
             )
 
             Text(
                 text = "Sistema de reciclaje inteligente",
-                style = MaterialTheme.typography.bodyLarge
+                style = MaterialTheme.typography.bodyLarge,
+                color = Color.White.copy(alpha = 0.9f)
             )
 
             Column(
@@ -295,34 +250,49 @@ fun ExpandedHomeScreen(
             ) {
                 Button(
                     onClick = { navController?.navigate("scan_page") },
-                    modifier = Modifier.fillMaxWidth()
+                    modifier = Modifier.fillMaxWidth(),
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = Color.White,
+                        contentColor = Color(0xFF4CAF50)
+                    ),
+                    elevation = ButtonDefaults.buttonElevation(defaultElevation = 8.dp)
                 ) {
-                    Text("Escanear Residuos")
+                    Text("Escanear Residuos", fontWeight = FontWeight.Bold)
                 }
 
-                Button(
+                OutlinedButton(
                     onClick = { navController?.navigate("centers_page") },
-                    modifier = Modifier.fillMaxWidth()
+                    modifier = Modifier.fillMaxWidth(),
+                    colors = ButtonDefaults.outlinedButtonColors(
+                        contentColor = Color.White
+                    )
                 ) {
-                    Text("Centros de Reciclaje")
+                    Text("Centros de Reciclaje", fontWeight = FontWeight.Bold)
                 }
 
-                Button(
+                OutlinedButton(
                     onClick = { navController?.navigate("rewards_page") },
-                    modifier = Modifier.fillMaxWidth()
+                    modifier = Modifier.fillMaxWidth(),
+                    colors = ButtonDefaults.outlinedButtonColors(
+                        contentColor = Color.White
+                    )
                 ) {
-                    Text("Mis Recompensas")
+                    Text("Mis Recompensas", fontWeight = FontWeight.Bold)
                 }
 
-                Button(
+                OutlinedButton(
                     onClick = { /* Perfil */ },
-                    modifier = Modifier.fillMaxWidth()
+                    modifier = Modifier.fillMaxWidth(),
+                    colors = ButtonDefaults.outlinedButtonColors(
+                        contentColor = Color.White
+                    )
                 ) {
-                    Text("Mi Perfil")
+                    Text("Mi Perfil", fontWeight = FontWeight.Bold)
                 }
             }
         }
 
+        // Panel principal
         Column(
             modifier = Modifier
                 .weight(1f)
@@ -332,7 +302,9 @@ fun ExpandedHomeScreen(
         ) {
             Text(
                 text = "Materiales Reciclables",
-                style = MaterialTheme.typography.headlineMedium
+                style = MaterialTheme.typography.headlineMedium,
+                color = Color.White,
+                fontWeight = FontWeight.Bold
             )
 
             WasteItemsListExpanded()
@@ -340,14 +312,16 @@ fun ExpandedHomeScreen(
     }
 }
 
-// LISTAS ADAPTABLES
+// LISTAS ADAPTABLES CON COLORES COHERENTES
 @Composable
 fun WasteItemsListCompact() {
     val wasteItems = listOf(
-        "Plástico - 50 puntos",
-        "Papel - 30 puntos",
-        "Metal - 80 puntos",
-        "Vidrio - 40 puntos"
+        "Plástico - 1 punto",
+        "Papel - 1 punto",
+        "Aluminio - 2 puntos",
+        "Vidrio - 2 puntos",
+        "Metal - 3 puntos"
+
     )
 
     LazyColumn {
@@ -355,12 +329,17 @@ fun WasteItemsListCompact() {
             Card(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(vertical = 4.dp)
+                    .padding(vertical = 4.dp),
+                colors = CardDefaults.cardColors(
+                    containerColor = Color.White
+                ),
+                shape = RoundedCornerShape(8.dp)
             ) {
                 Text(
                     text = item,
                     modifier = Modifier.padding(16.dp),
-                    style = MaterialTheme.typography.bodyMedium
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = Color(0xFF4CAF50)
                 )
             }
         }
@@ -370,10 +349,11 @@ fun WasteItemsListCompact() {
 @Composable
 fun WasteItemsListMedium() {
     val wasteItems = listOf(
-        "Botellas PET - 50 puntos",
-        "Cajas de Cartón - 30 puntos",
-        "Latas de Aluminio - 80 puntos",
-        "Botellas de Vidrio - 40 puntos"
+        "Botellas PET - 1 punto",
+        "Cajas de Cartón - 1 punto",
+        "Latas de Aluminio - 2 puntos",
+        "Botellas de Vidrio - 2 puntos",
+        "Elementos de metal - 3 puntos"
     )
 
     LazyColumn {
@@ -381,12 +361,17 @@ fun WasteItemsListMedium() {
             Card(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(vertical = 4.dp)
+                    .padding(vertical = 4.dp),
+                colors = CardDefaults.cardColors(
+                    containerColor = Color.White
+                ),
+                shape = RoundedCornerShape(8.dp)
             ) {
                 Text(
                     text = item,
                     modifier = Modifier.padding(16.dp),
-                    style = MaterialTheme.typography.bodyLarge
+                    style = MaterialTheme.typography.bodyLarge,
+                    color = Color(0xFF4CAF50)
                 )
             }
         }
@@ -396,10 +381,11 @@ fun WasteItemsListMedium() {
 @Composable
 fun WasteItemsListExpanded() {
     val wasteItems = listOf(
-        "Botellas PET - 50 puntos - Ahorra 0.15kg CO2",
-        "Cajas de Cartón - 30 puntos - Ahorra 0.10kg CO2",
-        "Latas de Aluminio - 80 puntos - Ahorra 0.25kg CO2",
-        "Botellas de Vidrio - 40 puntos - Ahorra 0.20kg CO2"
+        "Botellas PET - 1 punto - Ahorra 0.15kg CO2",
+        "Cajas de Cartón - 1 punto - Ahorra 0.10kg CO2",
+        "Latas de Aluminio - 2 puntos - Ahorra 0.25kg CO2",
+        "Botellas de Vidrio - 2 puntos - Ahorra 0.20kg CO2",
+        "Materiales de metal - 3 puntos - Ahorra 0.30kg CO2",
     )
 
     LazyColumn {
@@ -407,12 +393,17 @@ fun WasteItemsListExpanded() {
             Card(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(vertical = 4.dp)
+                    .padding(vertical = 4.dp),
+                colors = CardDefaults.cardColors(
+                    containerColor = Color.White
+                ),
+                shape = RoundedCornerShape(8.dp)
             ) {
                 Text(
                     text = item,
                     modifier = Modifier.padding(16.dp),
-                    style = MaterialTheme.typography.bodyLarge
+                    style = MaterialTheme.typography.bodyLarge,
+                    color = Color(0xFF4CAF50)
                 )
             }
         }

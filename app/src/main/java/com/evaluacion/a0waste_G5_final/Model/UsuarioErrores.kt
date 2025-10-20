@@ -5,4 +5,8 @@ data class UsuarioErrores(
     val correo: String? = null,
     val clave: String? = null,
     val direccion: String? = null,
+    val telefono: String? = null,
+    val tipoReciclador: String? = null,
+    val materialesInteres: String? = null,
+    val aceptaCamara: String? = null
 )

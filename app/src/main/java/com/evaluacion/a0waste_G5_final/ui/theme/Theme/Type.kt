@@ -1,4 +1,4 @@
-package com.evaluacion.a0waste_G5_final.ui.theme
+package com.evaluacion.a0waste_G5_final.ui.theme.Theme
 
 import androidx.compose.material3.Typography
 import androidx.compose.ui.text.TextStyle

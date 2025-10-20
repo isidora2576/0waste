@@ -1,0 +1,16 @@
+package com.evaluacion.a0waste_G5_final.Navigation
+
+
+sealed class NavigationEvent {
+
+    data class NavigateTo(
+        val route: Screen,
+        val popUpToRoute: Screen? = null,
+        val inclusive: Boolean = false,
+        val singleTop : Boolean = false
+    ) : NavigationEvent()
+
+    object PopBackStack : NavigationEvent()
+
+    object NavigateUp : NavigationEvent()
+}
