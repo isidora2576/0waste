@@ -2,6 +2,7 @@ package com.evaluacion.a0waste_G5_final.ui.theme.Screens
 
 //pantalla temporal
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
@@ -19,7 +20,10 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import com.evaluacion.a0waste_G5_final.R
 
+
+@SuppressLint("PrivateResource")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ScanScreen(
@@ -69,7 +73,7 @@ fun ScanScreen(
             ) {
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
                     Icon(
-                        painter = painterResource(id = androidx.core.R.drawable.ic_call_answer),
+                        painter = painterResource(id = R.drawable.logo),
                         contentDescription = "Cámara",
                         tint = Color.White,
                         modifier = Modifier.size(60.dp)
@@ -93,7 +97,7 @@ fun ScanScreen(
             Button(
                 onClick = {
                     // Simular éxito de escaneo
-                    viewModel.addPoints(25)
+                    viewModel.addPoints(3)
                     // Navegar a confirmación
                     navController?.navigate("rewards_page")
                 },

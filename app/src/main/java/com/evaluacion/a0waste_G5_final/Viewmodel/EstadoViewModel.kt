@@ -14,11 +14,11 @@ class EstadoViewModel(application: Application) : AndroidViewModel(application) 
 
     private val dataStore = EstadoDataStore(application.applicationContext)
 
-    // Estado que representa si está "activado" o no
+
     private val _activo = MutableStateFlow<Boolean?>(value = null)
     val activo: StateFlow<Boolean?> = _activo
 
-    // Estado para mostrar u ocultar el mensaje animado
+
     private val _mostrarMensaje = MutableStateFlow(value = false)
     val mostrarMensaje: StateFlow<Boolean> = _mostrarMensaje
 
@@ -36,19 +36,19 @@ class EstadoViewModel(application: Application) : AndroidViewModel(application) 
 
     fun alternarEstado() {
         viewModelScope.launch {
-            // Alternamos el valor actual
+
             val nuevoValor = !(_activo.value ?: false)
 
-            // Guardamos en DataStore
+
             dataStore.guardarEstado(nuevoValor)
 
-            // Actualizamos el flujo
+
             _activo.value = nuevoValor
 
-            // Mostramos el mensaje visual animado
+
             _mostrarMensaje.value = true
 
-            delay(timeMillis = 2000) // Ocultamos después de 2 segundos
+            delay(timeMillis = 2000)
             _mostrarMensaje.value = false
         }
     }

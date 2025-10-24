@@ -26,7 +26,7 @@ fun ModoReciclajeComponent(viewModel: EstadoViewModel) {
     val estado by viewModel.activo.collectAsState()
     val mostrarMensaje by viewModel.mostrarMensaje.collectAsState()
 
-    // ✅ CORREGIDO: Usar animateColorAsState directamente sin androidx.compose.animation.core
+
     val colorFondo by animateColorAsState(
         targetValue = if (estado == true) Color(0xFF4CAF50) else Color(0xFF9E9E9E),
         animationSpec = tween(durationMillis = 500),
@@ -59,7 +59,7 @@ fun ModoReciclajeComponent(viewModel: EstadoViewModel) {
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            // Interruptor animado
+
             Box(
                 modifier = Modifier
                     .width(60.dp)
@@ -100,7 +100,7 @@ fun ModoReciclajeComponent(viewModel: EstadoViewModel) {
                 )
             }
 
-            // Mensaje animado de confirmación
+
             AnimatedVisibility(
                 visible = mostrarMensaje,
                 enter = fadeIn(animationSpec = tween(300)),

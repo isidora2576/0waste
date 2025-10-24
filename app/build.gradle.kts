@@ -5,11 +5,11 @@ plugins {
 }
 
 android {
-    namespace = "com.evaluacion.a0waste"
+    namespace = "com.evaluacion.a0waste_G5_final"
     compileSdk = 36
 
     defaultConfig {
-        applicationId = "com.evaluacion.a0waste"
+        applicationId = "com.evaluacion.a0waste_G5_final"
         minSdk = 24
         targetSdk = 36
         versionCode = 1
@@ -62,6 +62,7 @@ dependencies {
     implementation(libs.androidx.compose.foundation)
     implementation(libs.androidx.datastore.core)
     implementation(libs.androidx.compose.animation)
+    implementation(libs.androidx.foundation)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)

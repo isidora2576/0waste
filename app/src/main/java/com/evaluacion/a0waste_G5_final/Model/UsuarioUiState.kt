@@ -6,9 +6,9 @@ data class UsuarioUiState(
     val correo: String = "",
     val clave: String = "",
     val direccion: String = "",
-    val telefono: String = "", // Para notificaciones
+    val telefono: String = "",
     val tipoReciclador: String = "", // "Principiante", "Intermedio", "Avanzado"
-    val materialesInteres: List<String> = emptyList(), // Materiales que recicla
+    val materialesInteres: List<String> = emptyList(),
     val aceptaTerminos: Boolean = false,
     val aceptaCamara: Boolean = false, //Pérmiso para usar cámara
     val errores: UsuarioErrores = UsuarioErrores()

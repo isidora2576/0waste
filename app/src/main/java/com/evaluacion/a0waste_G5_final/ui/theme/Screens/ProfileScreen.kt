@@ -86,11 +86,11 @@ fun ProfileScreen(
     }
 }
 
-// ✅ CORREGIDO: Preview sin ViewModel que requiera Application
+
 @Preview(showBackground = true)
 @Composable
 fun ProfileScreenPreview() {
-    // Creamos un ViewModel simple para el preview
+
     val previewViewModel = object : WasteViewModel() {
         override fun getPoints(): Int = 150
         override fun addPoints(points: Int) {}

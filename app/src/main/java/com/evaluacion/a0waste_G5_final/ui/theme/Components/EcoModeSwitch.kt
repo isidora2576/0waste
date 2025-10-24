@@ -39,25 +39,25 @@ import com.evaluacion.a0waste_G5_final.Viewmodel.EstadoViewModel
 
 @Composable
 fun EcoModeSwitch(viewModel: EstadoViewModel) {
-    // ✅ CORREGIDO: Especificar el tipo explícitamente y usar .value
+
     val estado by viewModel.activo.collectAsState()
     val mostrarMensaje by viewModel.mostrarMensaje.collectAsState()
 
-    // Animación de color basado en estado
+
     val colorFondo by androidx.compose.animation.animateColorAsState(
         targetValue = if (estado == true) Color(0xFF4CAF50) else Color(0xFF9E9E9E),
         animationSpec = tween(durationMillis = 500),
         label = "colorFondo"
     )
 
-    // Animación de posición del interruptor
+
     val paddingAnimado by animateDpAsState(
         targetValue = if (estado == true) 28.dp else 4.dp,
         animationSpec = tween(durationMillis = 300),
         label = "paddingInterruptor"
     )
 
-    // Texto derivado según el estado
+
     val textoBoton = if (estado == true) "Desactivar Modo Eco" else "Activar Modo Eco"
 
     Card(
@@ -78,7 +78,7 @@ fun EcoModeSwitch(viewModel: EstadoViewModel) {
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            // Interruptor animado
+
             Box(
                 modifier = Modifier
                     .width(60.dp)
@@ -107,7 +107,7 @@ fun EcoModeSwitch(viewModel: EstadoViewModel) {
 
             Button(
                 onClick = {
-                    // ✅ CORREGIDO: Usar la función correcta del ViewModel
+
                     viewModel.alternarEstado()
                 },
                 colors = ButtonDefaults.buttonColors(containerColor = Color.White),
@@ -120,7 +120,7 @@ fun EcoModeSwitch(viewModel: EstadoViewModel) {
                 )
             }
 
-            // Mensaje animado de confirmación
+
             AnimatedVisibility(
                 visible = mostrarMensaje,
                 enter = fadeIn(animationSpec = tween(300)),

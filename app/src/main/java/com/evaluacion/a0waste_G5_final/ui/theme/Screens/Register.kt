@@ -1,38 +1,13 @@
 package com.evaluacion.a0waste_G5_final.ui.theme.Screens
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material3.AssistChip
-import androidx.compose.material3.AssistChipDefaults
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.Checkbox
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.FilterChip
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -43,6 +18,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.evaluacion.a0waste_G5_final.Viewmodel.UsuarioViewModel
 
@@ -63,7 +39,7 @@ fun RegistroScreen(
                 colors = TopAppBarDefaults.topAppBarColors(containerColor = Color(0xFF81C784)),
                 navigationIcon = {
                     IconButton(onClick = { navController.popBackStack() }) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, "Volver", tint = Color.White)
+                        Icon(Icons.Default.ArrowBack, "Volver", tint = Color.White)
                     }
                 }
             )
@@ -71,8 +47,8 @@ fun RegistroScreen(
     ) { innerPadding ->
         Column(
             modifier = Modifier
-                .fillMaxSize()
                 .padding(innerPadding)
+                .fillMaxSize()
                 .background(Color(0xFF4CAF50))
                 .verticalScroll(rememberScrollState())
                 .padding(horizontal = 16.dp),
@@ -104,7 +80,7 @@ fun RegistroScreen(
                 isError = estado.errores.nombre != null,
                 supportingText = {
                     estado.errores.nombre?.let {
-                        Text(text = it, color = MaterialTheme.colorScheme.error)
+                        Text(text = it, color = Color(0xFFFF6B6B))
                     }
                 },
                 modifier = Modifier.fillMaxWidth(),
@@ -119,7 +95,7 @@ fun RegistroScreen(
                 isError = estado.errores.correo != null,
                 supportingText = {
                     estado.errores.correo?.let {
-                        Text(text = it, color = MaterialTheme.colorScheme.error)
+                        Text(text = it, color = Color(0xFFFF6B6B))
                     }
                 },
                 modifier = Modifier.fillMaxWidth(),
@@ -135,7 +111,7 @@ fun RegistroScreen(
                 isError = estado.errores.clave != null,
                 supportingText = {
                     estado.errores.clave?.let {
-                        Text(text = it, color = MaterialTheme.colorScheme.error)
+                        Text(text = it, color = Color(0xFFFF6B6B))
                     }
                 },
                 modifier = Modifier.fillMaxWidth(),
@@ -150,14 +126,14 @@ fun RegistroScreen(
                 isError = estado.errores.direccion != null,
                 supportingText = {
                     estado.errores.direccion?.let {
-                        Text(text = it, color = MaterialTheme.colorScheme.error)
+                        Text(text = it, color = Color(0xFFFF6B6B))
                     }
                 },
                 modifier = Modifier.fillMaxWidth(),
                 singleLine = true
             )
 
-            // NUEVO: Campo teléfono
+            // Campo teléfono
             OutlinedTextField(
                 value = estado.telefono,
                 onValueChange = viewModel::onTelefonoChange,
@@ -165,7 +141,7 @@ fun RegistroScreen(
                 isError = estado.errores.telefono != null,
                 supportingText = {
                     estado.errores.telefono?.let {
-                        Text(text = it, color = MaterialTheme.colorScheme.error)
+                        Text(text = it, color = Color(0xFFFF6B6B))
                     }
                 },
                 modifier = Modifier.fillMaxWidth(),
@@ -173,7 +149,7 @@ fun RegistroScreen(
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Phone)
             )
 
-            // NUEVO: Selector de tipo de reciclador
+            // Selector de tipo de reciclador
             Text(
                 "¿Cuál es tu experiencia reciclando?",
                 style = MaterialTheme.typography.bodyMedium,
@@ -198,12 +174,12 @@ fun RegistroScreen(
             if (estado.errores.tipoReciclador != null) {
                 Text(
                     text = estado.errores.tipoReciclador!!,
-                    color = MaterialTheme.colorScheme.error,
+                    color = Color(0xFFFF6B6B),
                     style = MaterialTheme.typography.bodySmall
                 )
             }
 
-            // NUEVO: Materiales de interés
+
             Text(
                 "¿Qué materiales sueles reciclar?",
                 style = MaterialTheme.typography.bodyMedium,
@@ -211,30 +187,60 @@ fun RegistroScreen(
                 modifier = Modifier.fillMaxWidth()
             )
 
-            LazyVerticalGrid(
-                columns = GridCells.Fixed(2),
-                verticalArrangement = Arrangement.spacedBy(8.dp),
-                horizontalArrangement = Arrangement.spacedBy(8.dp),
+
+            Column(
                 modifier = Modifier.fillMaxWidth()
             ) {
-                items(viewModel.materialesDisponibles) { material ->
-                    AssistChip(
-                        onClick = {
-                            viewModel.onMaterialInteresChange(
-                                material,
-                                !estado.materialesInteres.contains(material)
-                            )
-                        },
-                        label = { Text(material) },
-                        colors = AssistChipDefaults.assistChipColors(
-                            containerColor = if (estado.materialesInteres.contains(material))
-                                Color.White else Color.White.copy(alpha = 0.2f)
+                // Primera fila de materiales
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    viewModel.materialesDisponibles.take(4).forEach { material ->
+                        AssistChip(
+                            onClick = {
+                                viewModel.onMaterialInteresChange(
+                                    material,
+                                    !estado.materialesInteres.contains(material)
+                                )
+                            },
+                            label = { Text(material) },
+                            colors = AssistChipDefaults.assistChipColors(
+                                containerColor = if (estado.materialesInteres.contains(material))
+                                    Color.White else Color.White.copy(alpha = 0.2f)
+                            ),
+                            modifier = Modifier.weight(1f)
                         )
-                    )
+                    }
+                }
+
+                Spacer(modifier = Modifier.height(8.dp))
+
+                // Segunda fila de materiales
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    viewModel.materialesDisponibles.drop(4).forEach { material ->
+                        AssistChip(
+                            onClick = {
+                                viewModel.onMaterialInteresChange(
+                                    material,
+                                    !estado.materialesInteres.contains(material)
+                                )
+                            },
+                            label = { Text(material) },
+                            colors = AssistChipDefaults.assistChipColors(
+                                containerColor = if (estado.materialesInteres.contains(material))
+                                    Color.White else Color.White.copy(alpha = 0.2f)
+                            ),
+                            modifier = Modifier.weight(1f)
+                        )
+                    }
                 }
             }
 
-            // Checkbox: permisos de cámara (CRÍTICO para la app)
+            //Permisos de cámara
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Checkbox(
                     checked = estado.aceptaCamara,
@@ -258,13 +264,12 @@ fun RegistroScreen(
             if (estado.errores.aceptaCamara != null) {
                 Text(
                     text = estado.errores.aceptaCamara!!,
-                    color = MaterialTheme.colorScheme.error,
+                    color = Color(0xFFFF6B6B),
                     style = MaterialTheme.typography.bodySmall
                 )
             }
 
-
-// Checkbox: términos y condiciones
+            // Checkbox: términos y condiciones
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Checkbox(
                     checked = estado.aceptaTerminos,
@@ -297,6 +302,17 @@ fun RegistroScreen(
                 enabled = estado.aceptaTerminos
             ) {
                 Text("Comenzar a reciclar", fontWeight = FontWeight.Bold)
+            }
+
+
+            TextButton(
+                onClick = { navController.navigate("login_page") }
+            ) {
+                Text(
+                    "¿Ya tienes cuenta? Inicia sesión aquí",
+                    color = Color.White,
+                    style = MaterialTheme.typography.bodyMedium
+                )
             }
 
             Spacer(modifier = Modifier.height(32.dp))

@@ -45,7 +45,7 @@ class LoginViewModel : ViewModel() {
         return !hasErrors
     }
 
-    // Simulación de login (en una app real harías una llamada a API)
+    // Simulación de login
     fun loginUser(): Boolean {
         return validateLogin() && _loginState.value.email == "usuario@0waste.com" && _loginState.value.password == "123456"
     }

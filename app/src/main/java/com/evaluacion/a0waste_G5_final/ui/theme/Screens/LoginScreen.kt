@@ -1,5 +1,6 @@
 package com.evaluacion.a0waste_G5_final.ui.theme.Screens
 
+
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardOptions
@@ -23,7 +24,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
-import com.evaluacion.a0waste.R
+import com.evaluacion.a0waste_G5_final.R
 import com.evaluacion.a0waste_G5_final.Viewmodel.LoginViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -49,8 +50,11 @@ fun LoginScreen(
                     containerColor = Color(0xFF81C784)
                 ),
                 navigationIcon = {
-                    IconButton(onClick = { navController?.popBackStack() }) {
-                        Icon(Icons.Default.ArrowBack, "Volver", tint = Color.White)
+                    // Solo mostrar back si no es la primera pantalla
+                    if (navController?.previousBackStackEntry != null) {
+                        IconButton(onClick = { navController?.popBackStack() }) {
+                            Icon(Icons.Default.ArrowBack, "Volver", tint = Color.White)
+                        }
                     }
                 }
             )
@@ -65,12 +69,12 @@ fun LoginScreen(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(20.dp)
         ) {
-            // Logo
-            Icon(
+            androidx.compose.foundation.Image(
                 painter = painterResource(id = R.drawable.logo),
                 contentDescription = "Logo 0Waste",
-                tint = Color.White,
-                modifier = Modifier.size(120.dp)
+                modifier = Modifier
+                    .size(120.dp)
+                    .padding(8.dp)
             )
 
             Text(
@@ -89,7 +93,7 @@ fun LoginScreen(
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            // Campo de email - CORREGIDO: Sin outlinedTextFieldColors
+            // Campo de email
             OutlinedTextField(
                 value = state.email,
                 onValueChange = viewModel::onEmailChange,
@@ -97,7 +101,7 @@ fun LoginScreen(
                 isError = state.errors.email != null,
                 supportingText = {
                     state.errors.email?.let {
-                        Text(text = it, color = MaterialTheme.colorScheme.error)
+                        Text(text = it, color = Color(0xFFFF6B6B))
                     }
                 },
                 modifier = Modifier.fillMaxWidth(),
@@ -113,11 +117,11 @@ fun LoginScreen(
                     cursorColor = Color.White,
                     focusedIndicatorColor = Color.White,
                     unfocusedIndicatorColor = Color.White.copy(alpha = 0.5f),
-                    errorIndicatorColor = MaterialTheme.colorScheme.error
+                    errorIndicatorColor = Color(0xFFFF6B6B)
                 )
             )
 
-            // Campo de contraseña - CORREGIDO: Sin outlinedTextFieldColors
+            // Campo de contraseña
             OutlinedTextField(
                 value = state.password,
                 onValueChange = viewModel::onPasswordChange,
@@ -125,7 +129,7 @@ fun LoginScreen(
                 isError = state.errors.password != null,
                 supportingText = {
                     state.errors.password?.let {
-                        Text(text = it, color = MaterialTheme.colorScheme.error)
+                        Text(text = it, color = Color(0xFFFF6B6B))
                     }
                 },
                 modifier = Modifier.fillMaxWidth(),
@@ -151,7 +155,7 @@ fun LoginScreen(
                     cursorColor = Color.White,
                     focusedIndicatorColor = Color.White,
                     unfocusedIndicatorColor = Color.White.copy(alpha = 0.5f),
-                    errorIndicatorColor = MaterialTheme.colorScheme.error
+                    errorIndicatorColor = Color(0xFFFF6B6B)
                 )
             )
 
@@ -182,7 +186,6 @@ fun LoginScreen(
             Button(
                 onClick = {
                     if (viewModel.loginUser()) {
-                        // Login exitoso - navegar al home
                         navController?.navigate("home_page") {
                             popUpTo("login_page") { inclusive = true }
                         }
@@ -204,7 +207,23 @@ fun LoginScreen(
                 )
             }
 
-            Spacer(modifier = Modifier.height(32.dp))
+
+            TextButton(
+                onClick = {
+                    println("NAVEGANDO A REGISTRO")
+                    navController?.navigate("registro_page")
+                },
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text(
+                    "¿No tienes cuenta? Regístrate aquí",
+                    color = Color.White,
+                    style = MaterialTheme.typography.bodyMedium,
+                    fontWeight = FontWeight.Medium
+                )
+            }
+
+            Spacer(modifier = Modifier.height(16.dp))
 
             // Información de demo
             Card(

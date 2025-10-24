@@ -33,7 +33,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import com.evaluacion.a0waste.R
+import com.evaluacion.a0waste_G5_final.R
 
 // PANTALLA COMPACTA (Móviles pequeños)
 @Composable
