@@ -14,12 +14,10 @@ class EstadoViewModel(application: Application) : AndroidViewModel(application) 
 
     private val dataStore = EstadoDataStore(application.applicationContext)
 
-
-    private val _activo = MutableStateFlow<Boolean?>(value = null)
+    private val _activo = MutableStateFlow<Boolean?>(null)
     val activo: StateFlow<Boolean?> = _activo
 
-
-    private val _mostrarMensaje = MutableStateFlow(value = false)
+    private val _mostrarMensaje = MutableStateFlow(false)
     val mostrarMensaje: StateFlow<Boolean> = _mostrarMensaje
 
     init {
@@ -28,27 +26,18 @@ class EstadoViewModel(application: Application) : AndroidViewModel(application) 
 
     fun cargarEstado() {
         viewModelScope.launch {
-            // Simula demora para mostrar loader (como en la guía)
-            delay(timeMillis = 1500)
+            delay(1500)
             _activo.value = dataStore.obtenerEstado().first() ?: false
         }
     }
 
     fun alternarEstado() {
         viewModelScope.launch {
-
             val nuevoValor = !(_activo.value ?: false)
-
-
             dataStore.guardarEstado(nuevoValor)
-
-
             _activo.value = nuevoValor
-
-
             _mostrarMensaje.value = true
-
-            delay(timeMillis = 2000)
+            delay(2000)
             _mostrarMensaje.value = false
         }
     }

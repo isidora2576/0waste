@@ -13,14 +13,14 @@ class LoginViewModel : ViewModel() {
     fun onEmailChange(email: String) {
         _loginState.value = _loginState.value.copy(
             email = email,
-            errors = _loginState.value.errors.copy(email = null) // ✅ CORREGIDO
+            errors = _loginState.value.errors.copy(email = null)
         )
     }
 
     fun onPasswordChange(password: String) {
         _loginState.value = _loginState.value.copy(
             password = password,
-            errors = _loginState.value.errors.copy(password = null) // ✅ CORREGIDO
+            errors = _loginState.value.errors.copy(password = null)
         )
     }
 
