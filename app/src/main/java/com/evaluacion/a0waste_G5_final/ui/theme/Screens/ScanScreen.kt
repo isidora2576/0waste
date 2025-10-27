@@ -1,27 +1,31 @@
 package com.evaluacion.a0waste_G5_final.ui.theme.Screens
 
-//pantalla temporal
-
 import android.annotation.SuppressLint
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
-import androidx.navigation.NavController
-import com.evaluacion.a0waste_G5_final.Viewmodel.WasteViewModel
-import androidx.compose.runtime.remember
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
 import com.evaluacion.a0waste_G5_final.R
-
+import com.evaluacion.a0waste_G5_final.Viewmodel.PreviewWasteViewModel
+import com.evaluacion.a0waste_G5_final.Viewmodel.WasteViewModel
+import com.evaluacion.a0waste_G5_final.ui.theme.Theme._0waste_G5Theme
 
 @SuppressLint("PrivateResource")
 @OptIn(ExperimentalMaterial3Api::class)
@@ -30,6 +34,9 @@ fun ScanScreen(
     navController: NavController? = null,
     viewModel: WasteViewModel
 ) {
+    val puntos by viewModel.puntosUsuario.collectAsState()
+    val mostrarMensaje by viewModel.mostrarMensajePuntos.collectAsState()
+
     Scaffold(
         topBar = {
             TopAppBar(
@@ -93,13 +100,18 @@ fun ScanScreen(
                 textAlign = TextAlign.Center
             )
 
-            // Botones de acción
+            Text(
+                "Puntos actuales: ${puntos ?: 0}",
+                style = MaterialTheme.typography.headlineSmall,
+                color = Color.White,
+                fontWeight = FontWeight.Bold
+            )
+
+            // Botón de acción
             Button(
                 onClick = {
-                    // Simular éxito de escaneo
-                    viewModel.addPoints(3)
-                    // Navegar a confirmación
-                    navController?.navigate("rewards_page")
+                    viewModel.agregarPuntos(5)
+                    navController?.navigate("success_page")
                 },
                 modifier = Modifier
                     .fillMaxWidth()
@@ -109,7 +121,20 @@ fun ScanScreen(
                     contentColor = Color(0xFF4CAF50)
                 )
             ) {
-                Text("Toma la Foto ", fontWeight = FontWeight.Bold)
+                Text("Tomar Foto", fontWeight = FontWeight.Bold)
+            }
+
+            AnimatedVisibility(
+                visible = mostrarMensaje,
+                enter = fadeIn(animationSpec = tween(300)),
+                exit = fadeOut(animationSpec = tween(300))
+            ) {
+                Text(
+                    "¡+5 puntos guardados!",
+                    color = Color.White,
+                    style = MaterialTheme.typography.bodyLarge,
+                    fontWeight = FontWeight.Bold
+                )
             }
 
             OutlinedButton(
@@ -122,11 +147,14 @@ fun ScanScreen(
     }
 }
 
+@SuppressLint("ViewModelConstructorInComposable")
 @Preview(showBackground = true)
 @Composable
 fun ScanScreenPreview() {
-    ScanScreen(
-        navController = null,
-        viewModel = remember { WasteViewModel() }
-    )
+    _0waste_G5Theme {
+        ScanScreen(
+            navController = null,
+            viewModel = PreviewWasteViewModel()
+        )
+    }
 }

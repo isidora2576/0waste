@@ -15,6 +15,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.evaluacion.a0waste_G5_final.Viewmodel.WasteViewModel
+import com.evaluacion.a0waste_G5_final.Data.appDataStore
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -63,7 +64,7 @@ fun RewardsScreen(navController: NavController? = null, viewModel: WasteViewMode
                         fontWeight = FontWeight.Bold
                     )
                     Text(
-                        "Sigue reciclando para ganar más",
+                        "Cada foto vale 5 puntos",
                         style = MaterialTheme.typography.bodyMedium,
                         color = Color.Gray
                     )
@@ -78,7 +79,7 @@ fun RewardsScreen(navController: NavController? = null, viewModel: WasteViewMode
                 modifier = Modifier.fillMaxWidth()
             )
 
-            // Lista de recompensas con botones pequeños
+            // Lista de recompensas
             val recompensas = listOf(
                 "50 pts - 10% descuento tienda ecológica" to 50,
                 "100 pts - Bolsa reutilizable" to 100,
@@ -117,12 +118,11 @@ fun RewardsScreen(navController: NavController? = null, viewModel: WasteViewMode
                                 )
                             }
 
-                            // Botón pequeño de canje
+                            // Botón de canje
                             OutlinedButton(
                                 onClick = {
                                     if (viewModel.getPoints() >= puntosRequeridos) {
-
-                                        viewModel.addPoints(-puntosRequeridos)
+                                        viewModel.agregarPuntos(-puntosRequeridos)
                                     }
                                 },
                                 enabled = viewModel.getPoints() >= puntosRequeridos,
@@ -154,9 +154,14 @@ fun RewardsScreen(navController: NavController? = null, viewModel: WasteViewMode
     }
 }
 
+
+
 @SuppressLint("ViewModelConstructorInComposable")
 @Preview(showBackground = true)
 @Composable
 fun RewardsScreenPreview() {
-    RewardsScreen(viewModel = WasteViewModel())
+    com.evaluacion.a0waste_G5_final.Viewmodel.PreviewWasteViewModel().apply {
+    }.let { viewModel ->
+        RewardsScreen(viewModel = viewModel)
+    }
 }
