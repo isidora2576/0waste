@@ -1,9 +1,12 @@
 package com.evaluacion.a0waste_G5_final.ui.theme.Screens
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -18,7 +21,9 @@ import com.evaluacion.a0waste_G5_final.Viewmodel.WasteViewModel
 fun ProfileScreen(
     navController: NavController? = null,
     viewModel: WasteViewModel
-) {
+)
+{
+    val puntos by viewModel.puntosUsuario.collectAsState()
     Scaffold(
         topBar = {
             TopAppBar(
@@ -50,14 +55,14 @@ fun ProfileScreen(
                         style = MaterialTheme.typography.headlineSmall,
                         color = Color(0xFF4CAF50)
                     )
-                    Spacer(modifier = Modifier.height(12.dp))
-                    Text("• ${viewModel.getPoints() / 25} materiales reciclados")
-                    Text("• ${viewModel.getPoints() * 0.1} kg de CO₂ ahorrados")
-                    Text("• Nivel: ${when (viewModel.getPoints()) {
+                    Text("• ${(puntos ?: 0) / 5} materiales reciclados")
+                    Text("• ${(puntos ?: 0) * 0.2} kg de CO₂ ahorrados")
+                    Text("• Nivel: ${when (puntos ?: 0) {
                         in 0..100 -> "Reciclador Principiante"
                         in 101..500 -> "Reciclador Intermedio"
                         else -> "Reciclador Experto"
                     }}")
+                    Text("• ${puntos ?: 0} puntos acumulados", color = Color(0xFF4CAF50), fontWeight = FontWeight.Bold)
                 }
             }
 
@@ -70,9 +75,9 @@ fun ProfileScreen(
                         color = Color(0xFF4CAF50)
                     )
                     Spacer(modifier = Modifier.height(8.dp))
-                    Text("• Plástico PET - ${viewModel.getPoints() / 10} veces")
-                    Text("• Vidrio - ${viewModel.getPoints() / 15} veces")
-                    Text("• Cartón - ${viewModel.getPoints() / 12} veces")
+                    Text("• Plástico PET - ${viewModel.getPoints() / 5} veces")
+                    Text("• Vidrio - ${viewModel.getPoints() / 7} veces")
+                    Text("• Cartón - ${viewModel.getPoints() / 6} veces")
                 }
             }
 
@@ -86,15 +91,11 @@ fun ProfileScreen(
     }
 }
 
-
+@SuppressLint("ViewModelConstructorInComposable")
 @Preview(showBackground = true)
 @Composable
 fun ProfileScreenPreview() {
-
-    val previewViewModel = object : WasteViewModel() {
-        override fun getPoints(): Int = 150
-        override fun addPoints(points: Int) {}
+    com.evaluacion.a0waste_G5_final.Viewmodel.PreviewWasteViewModel().let { viewModel ->
+        ProfileScreen(viewModel = viewModel)
     }
-
-    ProfileScreen(viewModel = previewViewModel)
 }
