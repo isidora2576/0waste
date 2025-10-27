@@ -15,7 +15,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.evaluacion.a0waste_G5_final.Viewmodel.EstadoViewModel
-import com.evaluacion.a0waste_G5_final.ui.components.ModoReciclajeComponent
+import com.evaluacion.a0waste_G5_final.ui.theme.Components.ModoReciclajeComponent
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

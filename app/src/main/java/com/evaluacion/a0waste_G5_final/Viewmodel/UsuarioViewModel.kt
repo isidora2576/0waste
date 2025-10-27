@@ -39,7 +39,6 @@ class UsuarioViewModel : ViewModel() {
         _estado.update { it.copy(direccion = valor, errores = it.errores.copy(direccion = null)) }
     }
 
-    // Nuevas funciones
     fun onTelefonoChange(valor: String) {
         _estado.update { it.copy(telefono = valor, errores = it.errores.copy(telefono = null)) }
     }

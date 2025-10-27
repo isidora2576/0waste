@@ -1,4 +1,4 @@
-package com.evaluacion.a0waste_G5_final.ui.components
+package com.evaluacion.a0waste_G5_final.ui.theme.Components
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateColorAsState
