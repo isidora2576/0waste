@@ -27,6 +27,7 @@ import com.evaluacion.a0waste_G5_final.ui.theme.Screens.ResumenScreen
 import com.evaluacion.a0waste_G5_final.ui.theme.Screens.RewardsScreen
 import com.evaluacion.a0waste_G5_final.ui.theme.Screens.ScanScreen
 import com.evaluacion.a0waste_G5_final.ui.theme.Screens.StateScreen
+import com.evaluacion.a0waste_G5_final.ui.theme.Screens.SuccessScreen
 import com.evaluacion.a0waste_G5_final.ui.theme.Theme._0waste_G5Theme
 
 class MainActivity : ComponentActivity() {
@@ -43,59 +44,45 @@ class MainActivity : ComponentActivity() {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
                     NavHost(
                         navController = navController,
-                        startDestination = Screen.Login.route, // Empieza en Login
+                        startDestination = Screen.Login.route,
                         modifier = Modifier.padding(innerPadding),
                     ) {
-
                         composable(route = Screen.Login.route) {
                             LoginScreen(navController = navController, viewModel = loginViewModel)
                         }
-
-
                         composable(route = Screen.Home.route) {
                             HomeScreenCompacta(navController = navController, viewModel = viewModel)
                         }
-
-
                         composable(route = Screen.Scan.route) {
                             ScanScreen(navController = navController, viewModel = viewModel)
                         }
-
-
                         composable(route = Screen.Centers.route) {
                             CentersScreen(navController = navController)
                         }
-
-
                         composable(route = Screen.Rewards.route) {
                             RewardsScreen(navController = navController, viewModel = viewModel)
                         }
-
-
                         composable(route = Screen.Profile.route) {
                             ProfileScreen(navController = navController, viewModel = viewModel)
                         }
-
-
                         composable(route = Screen.Registro.route) {
-                            println("CARGANDO PANTALLA DE REGISTRO") // Debug
                             RegistroScreen(navController = navController, viewModel = usuarioViewModel)
                         }
-
-
                         composable(route = Screen.Resumen.route) {
                             ResumenScreen(navController = navController, viewModel = usuarioViewModel)
                         }
-
                         composable(route = "state_page") {
                             StateScreen(navController = navController)
                         }
+                        composable(route = "success_page") {
+                            SuccessScreen(navController = navController, pointsEarned = 5)
                         }
                     }
                 }
             }
         }
     }
+}
 
 
 @Composable
