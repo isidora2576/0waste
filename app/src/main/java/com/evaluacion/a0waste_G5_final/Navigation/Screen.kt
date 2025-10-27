@@ -9,8 +9,9 @@ sealed class Screen(val route: String) {
 
     data object Registro : Screen(route = "registro_page")
     data object Resumen : Screen(route = "resumen_page")
-    data object Login : Screen(route = "login_page") // ✅ NUEVO
+    data object Login : Screen(route = "login_page")
     data object State : Screen(route = "state_page")
+    data object Success : Screen(route = "success_page")
 
     data class Detail(val itemId: String) : Screen("detail_page/{itemId}"){
         fun buildRoute(): String {
