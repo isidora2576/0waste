@@ -50,7 +50,7 @@ fun LoginScreen(
                     containerColor = Color(0xFF81C784)
                 ),
                 navigationIcon = {
-                    // Solo mostrar back si no es la primera pantalla
+
                     if (navController?.previousBackStackEntry != null) {
                         IconButton(onClick = { navController?.popBackStack() }) {
                             Icon(Icons.Default.ArrowBack, "Volver", tint = Color.White)

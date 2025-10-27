@@ -21,7 +21,7 @@ fun CentersScreen(navController: NavController? = null) {
             TopAppBar(
                 title = {
                     Text(
-                        "Centros de Acopio",
+                        "Centros de Reciclaje",
                         color = Color.White,
                         fontWeight = FontWeight.Bold
                     )
@@ -47,13 +47,13 @@ fun CentersScreen(navController: NavController? = null) {
             )
 
             Text(
-                "Encuentra centros de acopio cerca de ti para entregar materiales voluminosos",
+                "Encuentra centros de reciclaje cerca de ti",
                 style = MaterialTheme.typography.bodyMedium,
                 color = Color.White.copy(alpha = 0.8f),
                 textAlign = TextAlign.Center
             )
 
-            // Centros de acopio realistas
+
             val centros = listOf(
                 Triple("Punto Limpio Municipal", "Av. Principal 123", "Plástico, Vidrio, Cartón"),
                 Triple("EcoCenter Mall", "Centro Comercial Norte", "Electrónicos, Pilas"),

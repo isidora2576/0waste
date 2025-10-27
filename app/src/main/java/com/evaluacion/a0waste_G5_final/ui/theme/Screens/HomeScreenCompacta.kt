@@ -45,7 +45,7 @@ fun HomeScreenCompacta(
         DrawerItem("Inicio", "home_page", Icons.Default.Home),
         DrawerItem("Escanear Materiales", "scan_page", Icons.Default.Camera),
         DrawerItem("Mis Recompensas", "rewards_page", Icons.Default.CardGiftcard),
-        DrawerItem("Centros de Acopio", "centers_page", Icons.Default.LocationOn),
+        DrawerItem("Centros de Reciclaje", "centers_page", Icons.Default.LocationOn),
         DrawerItem("Mi Perfil", "profile_page", Icons.Default.Person),
         DrawerItem("Ver Animaciones", "state_page", Icons.Default.Animation),
         DrawerItem("Cerrar Sesión", "login_page", Icons.Default.Logout)
@@ -57,7 +57,6 @@ fun HomeScreenCompacta(
             ModalDrawerSheet(
                 modifier = Modifier.width(280.dp)
             ) {
-                // Header del drawer con logo y información
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -85,7 +84,7 @@ fun HomeScreenCompacta(
                     )
                     Spacer(modifier = Modifier.height(8.dp))
                     Text(
-                        "${viewModel?.getPoints() ?: 0} puntos",
+                        "${viewModel?.puntosUsuario?.value ?: 0} puntos",
                         color = Color.White,
                         fontSize = 14.sp,
                         fontWeight = FontWeight.Bold
@@ -138,7 +137,7 @@ fun HomeScreenCompacta(
             }
         }
     ) {
-        // ✅ CONTENIDO ORIGINAL DE TU HOME SCREEN (modificado con el drawer)
+
         Scaffold(
             topBar = {
                 TopAppBar(
@@ -255,7 +254,7 @@ fun HomeScreenCompacta(
                         colors = ButtonDefaults.outlinedButtonColors(contentColor = Color.White)
                     ) {
                         Text(
-                            text = "Centros de Acopio",
+                            text = "Centros de Reciclaje",
                             fontWeight = FontWeight.Bold,
                             fontSize = 16.sp
                         )
