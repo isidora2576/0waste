@@ -53,7 +53,6 @@ fun CentersScreen(navController: NavController? = null) {
                 textAlign = TextAlign.Center
             )
 
-
             val centros = listOf(
                 Triple("Punto Limpio Municipal", "Av. Principal 123", "Plástico, Vidrio, Cartón"),
                 Triple("EcoCenter Mall", "Centro Comercial Norte", "Electrónicos, Pilas"),
@@ -80,10 +79,4 @@ fun CentersScreen(navController: NavController? = null) {
             }
         }
     }
-}
-
-@Preview(showBackground = true)
-@Composable
-fun CentersScreenPreview() {
-    CentersScreen()
 }
