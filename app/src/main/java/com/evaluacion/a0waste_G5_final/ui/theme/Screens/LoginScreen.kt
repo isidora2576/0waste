@@ -1,6 +1,5 @@
 package com.evaluacion.a0waste_G5_final.ui.theme.Screens
 
-
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardOptions
@@ -24,17 +23,41 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import com.evaluacion.a0waste_G5_final.Data.SessionManager
 import com.evaluacion.a0waste_G5_final.R
-import com.evaluacion.a0waste_G5_final.Viewmodel.LoginViewModel
+import com.evaluacion.a0waste_G5_final.Viewmodel.UsuarioViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun LoginScreen(
     navController: NavController? = null,
-    viewModel: LoginViewModel = viewModel()
+    viewModel: UsuarioViewModel = viewModel(),
+    sessionManager: SessionManager
 ) {
-    val state by viewModel.loginState.collectAsState()
+    LaunchedEffect(Unit) {
+    viewModel.setSessionManager(sessionManager)
+}
+    var email by remember { mutableStateOf("") }
+    var password by remember { mutableStateOf("") }
+    var rememberMe by remember { mutableStateOf(false) }
     var showPassword by rememberSaveable { mutableStateOf(false) }
+    val erroresLogin by viewModel.erroresLogin.collectAsState()
+
+    val loginState by viewModel.loginState.collectAsState()
+
+
+
+    LaunchedEffect(loginState) {
+        loginState?.onSuccess { response ->
+            // Login exitoso
+            navController?.navigate("home_page") {
+                popUpTo("login_page") { inclusive = true }
+            }
+        }?.onFailure { error ->
+            // Mostrar error (puedes agregar un Snackbar aquí)
+            println("Error login: ${error.message}")
+        }
+    }
 
     Scaffold(
         topBar = {
@@ -50,7 +73,6 @@ fun LoginScreen(
                     containerColor = Color(0xFF81C784)
                 ),
                 navigationIcon = {
-
                     if (navController?.previousBackStackEntry != null) {
                         IconButton(onClick = { navController?.popBackStack() }) {
                             Icon(Icons.Default.ArrowBack, "Volver", tint = Color.White)
@@ -93,15 +115,17 @@ fun LoginScreen(
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            // Campo de email
             OutlinedTextField(
-                value = state.email,
-                onValueChange = viewModel::onEmailChange,
+                value = email,
+                onValueChange = {
+                    email = it
+                    viewModel.limpiarErroresLogin()
+                },
                 label = { Text("Email", color = Color.White) },
-                isError = state.errors.email != null,
+                isError = erroresLogin["email"] != null,
                 supportingText = {
-                    state.errors.email?.let {
-                        Text(text = it, color = Color(0xFFFF6B6B))
+                    erroresLogin["email"]?.let { error ->
+                        Text(text = error, color = Color(0xFFFF6B6B))
                     }
                 },
                 modifier = Modifier.fillMaxWidth(),
@@ -121,15 +145,18 @@ fun LoginScreen(
                 )
             )
 
-            // Campo de contraseña
+            //CAMPO PASSWORD CON VALIDACIÓN
             OutlinedTextField(
-                value = state.password,
-                onValueChange = viewModel::onPasswordChange,
+                value = password,
+                onValueChange = {
+                    password = it
+                    viewModel.limpiarErroresLogin()
+                },
                 label = { Text("Contraseña", color = Color.White) },
-                isError = state.errors.password != null,
+                isError = erroresLogin["password"] != null,
                 supportingText = {
-                    state.errors.password?.let {
-                        Text(text = it, color = Color(0xFFFF6B6B))
+                    erroresLogin["password"]?.let { error ->
+                        Text(text = error, color = Color(0xFFFF6B6B))
                     }
                 },
                 modifier = Modifier.fillMaxWidth(),
@@ -165,8 +192,8 @@ fun LoginScreen(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Checkbox(
-                    checked = state.rememberMe,
-                    onCheckedChange = viewModel::onRememberMeChange,
+                    checked = rememberMe,
+                    onCheckedChange = { rememberMe = it },
                     colors = CheckboxDefaults.colors(
                         checkedColor = Color.White,
                         uncheckedColor = Color.White.copy(alpha = 0.7f),
@@ -182,13 +209,13 @@ fun LoginScreen(
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            // Botón de login
+            // BOTÓN DE LOGIN MODIFICADO
             Button(
                 onClick = {
-                    if (viewModel.loginUser()) {
-                        navController?.navigate("home_page") {
-                            popUpTo("login_page") { inclusive = true }
-                        }
+                    // Validar localmente primero
+                    if (viewModel.validarLoginLocal(email, password)) {
+                        // Si pasa validación local, llamar a la API
+                        viewModel.loginUsuario(email, password)
                     }
                 },
                 modifier = Modifier
@@ -207,10 +234,8 @@ fun LoginScreen(
                 )
             }
 
-
             TextButton(
                 onClick = {
-                    println("NAVEGANDO A REGISTRO")
                     navController?.navigate("registro_page")
                 },
                 modifier = Modifier.fillMaxWidth()
@@ -255,5 +280,7 @@ fun LoginScreen(
 @Preview(showBackground = true)
 @Composable
 fun LoginScreenPreview() {
-    LoginScreen()
+    LoginScreen(
+        sessionManager = SessionManager(androidx.compose.ui.platform.LocalContext.current)
+    )
 }
