@@ -41,3 +41,4 @@ Puede crear una cuenta si lo desea.
 
 API UTILIZADA PARA ALMACENAR DATOS DE USUARIOS Y PUNTOS: https://github.com/yisuzx/0waste
 ACTUALIZACION: Test unitarios, Consumo de API, Persistencia en DataBase.
+ENDPOINTS: GET, PUT, POST EN USUARIO Y PUNTOS
