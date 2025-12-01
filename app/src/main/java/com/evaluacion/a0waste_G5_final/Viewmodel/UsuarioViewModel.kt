@@ -1,89 +1,332 @@
 package com.evaluacion.a0waste_G5_final.Viewmodel
 
 import androidx.lifecycle.ViewModel
-import com.evaluacion.a0waste_G5_final.Model.UsuarioErrores
-import com.evaluacion.a0waste_G5_final.Model.UsuarioUiState
+import androidx.lifecycle.viewModelScope
+import com.evaluacion.a0waste_G5_final.Data.SessionManager
+import com.evaluacion.a0waste_G5_final.Model.LoginRequest
+import com.evaluacion.a0waste_G5_final.Model.PuntosRequest
+import com.evaluacion.a0waste_G5_final.Model.UsuarioRequest
+import com.evaluacion.a0waste_G5_final.Model.UsuarioResponse
+import com.evaluacion.a0waste_G5_final.Service.RetrofitClient
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 
 class UsuarioViewModel : ViewModel() {
 
-    private val _estado = MutableStateFlow(UsuarioUiState())
-    val estado: StateFlow<UsuarioUiState> = _estado.asStateFlow()
+    private val _registroState = MutableStateFlow<Result<Any>?>(null)
+    val registroState: StateFlow<Result<Any>?> = _registroState
 
-    // Lista de materiales reciclables
-    val materialesDisponibles = listOf(
-        "Plástico PET", "Vidrio", "Aluminio", "Cartón",
-        "Papel", "Tetrapak", "Electrónicos", "Pilas"
-    )
+    private val _loginState = MutableStateFlow<Result<Any>?>(null)
+    val loginState: StateFlow<Result<Any>?> = _loginState
 
-    // Tipos de reciclador
-    val tiposReciclador = listOf("Principiante", "Intermedio", "Avanzado")
+    private val _puntosState = MutableStateFlow<Result<Any>?>(null)
+    val puntosState: StateFlow<Result<Any>?> = _puntosState
 
-    // Funciones existentes
-    fun onNombreChange(valor: String) {
-        _estado.update { it.copy(nombre = valor, errores = it.errores.copy(nombre = null)) }
+    // Estados para validaciones locales
+    private val _erroresRegistro = MutableStateFlow<Map<String, String>>(emptyMap())
+    val erroresRegistro: StateFlow<Map<String, String>> = _erroresRegistro
+
+    private val _erroresLogin = MutableStateFlow<Map<String, String>>(emptyMap())
+    val erroresLogin: StateFlow<Map<String, String>> = _erroresLogin
+    private val _usuarioRegistrado = MutableStateFlow<UsuarioRequest?>(null)
+    val usuarioRegistrado: StateFlow<UsuarioRequest?> = _usuarioRegistrado
+
+    private val _usuarioData = MutableStateFlow<UsuarioResponse?>(null)
+    val usuarioData: StateFlow<UsuarioResponse?> = _usuarioData
+
+    private val _puntosUsuario = MutableStateFlow<Int>(0)
+    val puntosUsuario: StateFlow<Int> = _puntosUsuario
+
+    private val _loadingUsuario = MutableStateFlow(false)
+    val loadingUsuario: StateFlow<Boolean> = _loadingUsuario
+
+    // Validación local de registro
+    fun validarRegistroLocal(
+        nombre: String,
+        email: String,
+        password: String,
+        direccion: String,
+        telefono: String,
+        tipoReciclador: String,
+        aceptaTerminos: Boolean,
+        aceptaCamara: Boolean
+    ): Boolean {
+        val errores = mutableMapOf<String, String>()
+
+        if (nombre.isBlank()) errores["nombre"] = "Nombre es obligatorio"
+        if (email.isBlank()) errores["email"] = "Email es obligatorio"
+        else if (!email.contains("@")) errores["email"] = "Email inválido"
+        if (password.isBlank()) errores["password"] = "Contraseña es obligatoria"
+        else if (password.length < 6) errores["password"] = "Mínimo 6 caracteres"
+        if (direccion.isBlank()) errores["direccion"] = "Dirección es obligatoria"
+        if (telefono.isBlank()) errores["telefono"] = "Teléfono es obligatorio"
+        else if (telefono.length < 9) errores["telefono"] = "Teléfono inválido"
+        if (tipoReciclador.isBlank()) errores["tipoReciclador"] = "Selecciona tu nivel"
+        if (!aceptaTerminos) errores["terminos"] = "Debes aceptar los términos"
+        if (!aceptaCamara) errores["camara"] = "Necesario para subir evidencia"
+
+        _erroresRegistro.value = errores
+        return errores.isEmpty()
     }
 
-    fun onCorreoChange(valor: String) {
-        _estado.update { it.copy(correo = valor, errores = it.errores.copy(correo = null)) }
+    // Validación local de login
+    fun validarLoginLocal(email: String, password: String): Boolean {
+        val errores = mutableMapOf<String, String>()
+
+        if (email.isBlank()) errores["email"] = "Email es obligatorio"
+        else if (!email.contains("@")) errores["email"] = "Email inválido"
+        if (password.isBlank()) errores["password"] = "Contraseña es obligatoria"
+        else if (password.length < 6) errores["password"] = "Mínimo 6 caracteres"
+
+        _erroresLogin.value = errores
+        return errores.isEmpty()
     }
 
-    fun onClaveChange(valor: String) {
-        _estado.update { it.copy(clave = valor, errores = it.errores.copy(clave = null)) }
+    // Limpiar errores
+    fun limpiarErroresRegistro() {
+        _erroresRegistro.value = emptyMap()
     }
 
-    fun onDireccionChange(valor: String) {
-        _estado.update { it.copy(direccion = valor, errores = it.errores.copy(direccion = null)) }
+    fun limpiarErroresLogin() {
+        _erroresLogin.value = emptyMap()
     }
 
-    fun onTelefonoChange(valor: String) {
-        _estado.update { it.copy(telefono = valor, errores = it.errores.copy(telefono = null)) }
-    }
 
-    fun onTipoRecicladorChange(valor: String) {
-        _estado.update { it.copy(tipoReciclador = valor, errores = it.errores.copy(tipoReciclador = null)) }
-    }
+    fun registrarUsuario(usuario: UsuarioRequest) {
+        viewModelScope.launch {
+            try {
+                println("Intentando registrar usuario: ${usuario.email}")
 
-    fun onMaterialInteresChange(material: String, seleccionado: Boolean) {
-        val nuevosMateriales = if (seleccionado) {
-            _estado.value.materialesInteres + material
-        } else {
-            _estado.value.materialesInteres - material
+                // CONVERTIR A FORMATO API ANTES DE ENVIAR
+                val usuarioParaApi = usuario.toApiFormat()
+                println("Datos convertidos para API: $usuarioParaApi")
+
+                val response = RetrofitClient.apiService.registrarUsuario(usuarioParaApi)
+
+                if (response.isSuccessful) {
+                    println("Usuario registrado exitosamente")
+
+
+                    _registroState.value = Result.success(response.body()!!)
+                } else {
+                    val errorBody = response.errorBody()?.string() ?: "Error desconocido"
+                    println("Error en registro: ${response.code()} - $errorBody")
+                    _registroState.value = Result.failure(Exception("Error del servidor: $errorBody"))
+                }
+            } catch (e: Exception) {
+                println("Excepción en registro: ${e.message}")
+                _registroState.value = Result.failure(Exception("Error de conexión: ${e.message}"))
+
+            }
         }
-        _estado.update { it.copy(materialesInteres = nuevosMateriales) }
     }
 
-    fun onAceptarTerminosChange(valor: Boolean) {
-        _estado.update { it.copy(aceptaTerminos = valor) }
+
+    private lateinit var sessionManager: SessionManager
+
+    fun setSessionManager(manager: SessionManager) {
+        this.sessionManager = manager
     }
 
-    fun onAceptaCamaraChange(valor: Boolean) {
-        _estado.update { it.copy(aceptaCamara = valor, errores = it.errores.copy(aceptaCamara = null)) }
+    fun loginUsuario(email: String, password: String) {
+        viewModelScope.launch {
+            try {
+                println("Intentando login: $email")
+
+                if (sessionManager == null) {
+                    println("SessionManager no inicializado")
+                    return@launch
+                }
+
+                val loginResponse = RetrofitClient.apiService.loginUsuario(LoginRequest(email, password))
+
+                if (loginResponse.isSuccessful) {
+                    println("Login exitoso, obteniendo datos del usuario...")
+
+                    val usuarioResponse = RetrofitClient.apiService.obtenerUsuarioPorEmail(email)
+
+                    if (usuarioResponse.isSuccessful) {
+                        val usuario = usuarioResponse.body()
+                        if (usuario != null) {
+                            // VERIFICAR QUÉ ID ESTÁ LLEGANDO DE LA API
+                            println(" USUARIO OBTENIDO DE LA API:")
+                            println("   - ID: ${usuario.id}")
+                            println("   - Email: ${usuario.email}")
+                            println("   - Nombre: ${usuario.nombreCompleto}")
+
+                            sessionManager!!.saveUserSession(
+                                userId = usuario.id,
+                                email = usuario.email,
+                                name = usuario.nombreCompleto
+                            )
+
+                            sessionManager!!.printSessionState()
+
+                            _loginState.value = Result.success(usuario)
+                        } else {
+                            _loginState.value = Result.failure(Exception("No se pudieron obtener los datos del usuario"))
+                        }
+                    } else {
+                        println(" Error al obtener usuario: ${usuarioResponse.code()}")
+                        _loginState.value = Result.failure(Exception("Error al obtener datos del usuario"))
+                    }
+                } else {
+                    val errorBody = loginResponse.errorBody()?.string() ?: "Credenciales inválidas"
+                    println("Error en login: ${loginResponse.code()} - $errorBody")
+                    _loginState.value = Result.failure(Exception(errorBody))
+                }
+            } catch (e: Exception) {
+                println("Excepción en login: ${e.message}")
+                _loginState.value = Result.failure(Exception("Error de conexión: ${e.message}"))
+            }
+        }
     }
 
-    // Validación mejorada
-    fun validarFormulario(): Boolean {
-        val estadoActual = _estado.value
-        val errores = UsuarioErrores(
-            nombre = if (estadoActual.nombre.isBlank()) "Campo obligatorio" else null,
-            correo = if (!estadoActual.correo.contains("@")) "Correo inválido" else null,
-            clave = if (estadoActual.clave.length < 6) "Debe tener al menos 6 caracteres" else null,
-            direccion = if (estadoActual.direccion.isBlank()) "Campo obligatorio" else null,
-            telefono = if (estadoActual.telefono.length < 9) "Teléfono inválido" else null,
-            tipoReciclador = if (estadoActual.tipoReciclador.isBlank()) "Selecciona tu nivel" else null,
-            aceptaCamara = if (!estadoActual.aceptaCamara) "Necesario para subir evidencia" else null
-        )
+    fun agregarPuntosApi(usuarioId: Long, puntos: Int, descripcion: String) {
+        viewModelScope.launch {
+            try {
+                val response = RetrofitClient.apiService.agregarPuntos(
+                    PuntosRequest(usuarioId, puntos, descripcion)
+                )
+                if (response.isSuccessful) {
+                    _puntosState.value = Result.success(response.body()!!)
+                } else {
+                    _puntosState.value = Result.failure(Exception("Error al agregar puntos: ${response.code()}"))
+                }
+            } catch (e: Exception) {
+                _puntosState.value = Result.failure(e)
+            }
+        }
+    }
 
-        val hayErrores = listOfNotNull(
-            errores.nombre, errores.correo, errores.clave,
-            errores.direccion, errores.telefono,
-            errores.tipoReciclador, errores.aceptaCamara
-        ).isNotEmpty()
+    fun canjearPuntosApi(usuarioId: Long, puntos: Int, descripcion: String) {
+        viewModelScope.launch {
+            try {
+                val response = RetrofitClient.apiService.canjearPuntos(
+                    PuntosRequest(usuarioId, puntos, descripcion)
+                )
+                if (response.isSuccessful) {
+                    _puntosState.value = Result.success(response.body()!!)
+                } else {
+                    _puntosState.value = Result.failure(Exception("Error al canjear puntos: ${response.code()}"))
+                }
+            } catch (e: Exception) {
+                _puntosState.value = Result.failure(e)
+            }
+        }
+    }
+    fun obtenerUsuarioDesdeApi(usuarioId: Long) {
+        viewModelScope.launch {
+            try {
+                _loadingUsuario.value = true
+                println("Obteniendo usuario ID: $usuarioId desde API...")
 
-        _estado.update { it.copy(errores = errores) }
-        return !hayErrores
+                val response = RetrofitClient.apiService.obtenerUsuario(usuarioId)
+
+                if (response.isSuccessful) {
+                    val usuario = response.body() as? Map<String, Any>
+                    if (usuario != null) {
+                        // Parsear datos del usuario
+                        val usuarioResponse = UsuarioResponse(
+                            id = (usuario["id"] as? Double)?.toLong() ?: usuarioId,
+                            nombreCompleto = usuario["nombreCompleto"] as? String ?: "",
+                            email = usuario["email"] as? String ?: "",
+                            direccion = usuario["direccion"] as? String ?: "",
+                            telefono = usuario["telefono"] as? String ?: "",
+                            tipoReciclador = usuario["tipoReciclador"] as? String ?: "Principiante",
+                            materialesInteres = usuario["materialesInteres"] as? List<String> ?: emptyList(),
+                            permisoCamara = usuario["permisoCamara"] as? Boolean ?: false,
+                            puntosActuales = (usuario["puntosActuales"] as? Double)?.toInt() ?: 0
+                        )
+
+                        _usuarioData.value = usuarioResponse
+                        _puntosUsuario.value = usuarioResponse.puntosActuales
+
+                        println("Usuario obtenido: ${usuarioResponse.nombreCompleto}, Puntos: ${usuarioResponse.puntosActuales}")
+                    }
+                } else {
+                    println("Error al obtener usuario: ${response.code()}")
+                    // Intentar obtener por email como fallback
+                    obtenerUsuarioPorEmailFallback()
+                }
+            } catch (e: Exception) {
+                println("Excepción al obtener usuario: ${e.message}")
+            } finally {
+                _loadingUsuario.value = false
+            }
+        }
+    }
+    private fun obtenerUsuarioPorEmailFallback() {
+        viewModelScope.launch {
+            try {
+                val email = sessionManager.getUserEmail()
+                if (email.isNotEmpty()) {
+                    println("Intentando obtener usuario por email: $email")
+
+                    val response = RetrofitClient.apiService.obtenerUsuarioPorEmail(email)
+                    if (response.isSuccessful) {
+                        val usuario = response.body()
+                        if (usuario != null) {
+                            _usuarioData.value = usuario
+                            _puntosUsuario.value = usuario.puntosActuales
+
+                            // Actualizar SessionManager con el ID correcto
+                            sessionManager.saveUserSession(
+                                userId = usuario.id,
+                                email = usuario.email,
+                                name = usuario.nombreCompleto
+                            )
+                        }
+                    }
+                }
+            } catch (e: Exception) {
+                println("Fallback también falló: ${e.message}")
+            }
+        }
+    }
+    private val _historialPuntos = MutableStateFlow<List<Any>>(emptyList())
+    val historialPuntos: StateFlow<List<Any>> = _historialPuntos
+
+    fun obtenerHistorialPuntos(usuarioId: Long) {
+        viewModelScope.launch {
+            try {
+                val response = RetrofitClient.apiService.obtenerHistorialPuntos(usuarioId)
+                if (response.isSuccessful) {
+                    val historial = response.body() as? List<*> ?: emptyList<Any>()
+                    _historialPuntos.value = historial.filterNotNull()
+                }
+            } catch (e: Exception) {
+                println("Error obteniendo historial: ${e.message}")
+            }
+        }
+        fun refrescarDatosUsuario() {
+            val userId = sessionManager.getUserId()
+            if (userId > 0L) {
+                obtenerUsuarioDesdeApi(userId)
+                obtenerHistorialPuntos(userId)
+            }
+        }
+        fun cargarPuntosUsuario(usuarioId: Long) {
+            viewModelScope.launch {
+                try {
+                    _loadingUsuario.value = true
+                    val response = RetrofitClient.apiService.obtenerUsuario(usuarioId)
+
+                    if (response.isSuccessful) {
+                        val usuario = response.body() as? Map<String, Any>
+                        if (usuario != null) {
+                            val puntos = (usuario["puntosActuales"] as? Double)?.toInt() ?: 0
+                            _puntosUsuario.value = puntos
+                            println("Puntos cargados desde API: $puntos")
+                        }
+                    }
+                } catch (e: Exception) {
+                    println("Error cargando puntos: ${e.message}")
+                } finally {
+                    _loadingUsuario.value = false
+                }
+            }
+        }
     }
 }
