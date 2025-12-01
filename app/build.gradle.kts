@@ -37,6 +37,10 @@ android {
     buildFeatures {
         compose = true
     }
+
+    composeOptions {
+        kotlinCompilerExtensionVersion = "1.5.4"
+    }
 }
 
 dependencies {
@@ -49,6 +53,10 @@ dependencies {
     implementation(libs.androidx.compose.ui.graphics)
     implementation(libs.androidx.compose.ui.tooling.preview)
     implementation(libs.androidx.compose.material3)
+    implementation("com.squareup.retrofit2:retrofit:2.9.0")
+    implementation("com.squareup.retrofit2:converter-gson:2.9.0")
+    implementation("com.squareup.okhttp3:logging-interceptor:4.11.0")
+    implementation("com.google.code.gson:gson:2.10.1")
     implementation("androidx.compose.material3:material3-window-size-class:1.1.2")
     implementation("androidx.navigation:navigation-compose:2.7.4")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.3")
@@ -59,11 +67,20 @@ dependencies {
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.8.0")
     implementation("androidx.lifecycle:lifecycle-runtime-compose:2.8.0")
     implementation("androidx.navigation:navigation-compose:2.7.7")
+    implementation("androidx.camera:camera-camera2:1.3.0")
+    implementation("androidx.camera:camera-lifecycle:1.3.0")
+    implementation("androidx.camera:camera-view:1.3.0")
+    implementation("com.google.android.gms:play-services-maps:18.2.0")
+    implementation("com.google.maps.android:maps-compose:2.14.0")
+    implementation("com.google.android.gms:play-services-location:21.0.1")
     implementation(libs.androidx.compose.foundation)
     implementation(libs.androidx.datastore.core)
     implementation(libs.androidx.compose.animation)
     implementation(libs.androidx.foundation)
     implementation(libs.core.ktx)
+    implementation(libs.androidx.camera.core)
+    implementation(libs.androidx.compose.ui.text)
+    implementation(libs.play.services.maps)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
