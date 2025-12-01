@@ -31,7 +31,13 @@ Datos Usuariodemo:
 Para facilitar la prueba y revisión del proyecto, se a implementado un usuario de demostración que permita ingresar a la aplicacion sin que 
 se registre manuealmente 
 Datos de acceso: 
-usuario@0waste.com
+jes.moran@duocuc.com
 123456
-Con estos datos se podra navegar por la aplicación visualizando las secciones principales implementadas.
+is.bascunan@duocuc.cl
+987654
+Con estos datos se podra navegar por la aplicación visualizando las secciones principales implementadas y ver la diferencia de puntos entre usuario
 Puede crear una cuenta si lo desea. 
+
+
+API UTILIZADA PARA ALMACENAR DATOS DE USUARIOS Y PUNTOS: https://github.com/yisuzx/0waste
+ACTUALIZACION: Test unitarios, Consumo de API, Persistencia en DataBase.
