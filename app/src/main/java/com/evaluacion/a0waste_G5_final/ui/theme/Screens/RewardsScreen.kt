@@ -7,19 +7,48 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import com.evaluacion.a0waste_G5_final.Data.SessionManager
+import com.evaluacion.a0waste_G5_final.Viewmodel.UsuarioViewModel
 import com.evaluacion.a0waste_G5_final.Viewmodel.WasteViewModel
-import com.evaluacion.a0waste_G5_final.Data.appDataStore
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun RewardsScreen(navController: NavController? = null, viewModel: WasteViewModel) {
+fun RewardsScreen(
+    navController: NavController? = null,
+    viewModel: WasteViewModel,
+    usuarioViewModel: UsuarioViewModel = viewModel(),
+    sessionManager: SessionManager = SessionManager(LocalContext.current)
+) {
+    val puntosState by usuarioViewModel.puntosState.collectAsState()
+    val usuarioId = remember { sessionManager.getUserId() }
+
+
+    LaunchedEffect(Unit) {
+        usuarioViewModel.setSessionManager(sessionManager)
+    }
+
+    // Observar resultado de canje en API
+    LaunchedEffect(puntosState) {
+        puntosState?.onSuccess { response ->
+            println("Canje exitoso en API")
+        }?.onFailure { error ->
+            println("Error en canje API: ${error.message}")
+        }
+    }
+
     Scaffold(
         topBar = {
             TopAppBar(
@@ -57,15 +86,31 @@ fun RewardsScreen(navController: NavController? = null, viewModel: WasteViewMode
                     Text("Tus Puntos Acumulados",
                         style = MaterialTheme.typography.bodyLarge,
                         color = Color(0xFF4CAF50))
+
+                    // Intentar obtener puntos de API primero
+                    val puntosApi = usuarioViewModel.puntosUsuario.collectAsState().value
+                    val puntosLocales = viewModel.getPoints()
+                    val puntosMostrar = if (puntosApi > 0) puntosApi else puntosLocales
+
                     Text(
-                        "${viewModel.getPoints()} puntos",
+                        "$puntosMostrar puntos",
                         style = MaterialTheme.typography.displaySmall,
                         color = Color(0xFF4CAF50),
                         fontWeight = FontWeight.Bold
                     )
+
+                    // Mostrar fuente
+                    val fuente = if (usuarioId > 0L && puntosApi > 0) "Sincronizados con nube"
+                    else "Almacenamiento local"
+                    Text(
+                        fuente,
+                        style = MaterialTheme.typography.bodySmall,
+                        color = if (usuarioId > 0L) Color(0xFF4CAF50) else Color.Gray
+                    )
+
                     Text(
                         "Cada foto vale 5 puntos",
-                        style = MaterialTheme.typography.bodyMedium,
+                        style = MaterialTheme.typography.bodySmall,
                         color = Color.Gray
                     )
                 }
@@ -122,7 +167,22 @@ fun RewardsScreen(navController: NavController? = null, viewModel: WasteViewMode
                             OutlinedButton(
                                 onClick = {
                                     if (viewModel.getPoints() >= puntosRequeridos) {
-                                        viewModel.agregarPuntos(-puntosRequeridos)
+
+                                        val usuarioId = sessionManager.getUserId()
+
+                                        if (usuarioId > 0L) {
+                                            println("Canjeando recompensa para usuario ID: $usuarioId")
+
+
+                                            //CANJEAR EN API
+                                            usuarioViewModel.canjearPuntosApi(
+                                                usuarioId,
+                                                puntosRequeridos,
+                                                recompensa
+                                            )
+                                        } else {
+                                            println("No hay usuario logueado para canjear")
+                                        }
                                     }
                                 },
                                 enabled = viewModel.getPoints() >= puntosRequeridos,
@@ -153,8 +213,6 @@ fun RewardsScreen(navController: NavController? = null, viewModel: WasteViewMode
         }
     }
 }
-
-
 
 @SuppressLint("ViewModelConstructorInComposable")
 @Preview(showBackground = true)
