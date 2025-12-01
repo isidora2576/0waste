@@ -13,6 +13,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -20,6 +21,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import com.evaluacion.a0waste_G5_final.Data.SessionManager
 import com.evaluacion.a0waste_G5_final.R
 import com.evaluacion.a0waste_G5_final.Viewmodel.WasteViewModel
 import kotlinx.coroutines.launch
@@ -35,10 +37,15 @@ data class DrawerItem(
 @Composable
 fun HomeScreenCompacta(
     navController: NavController? = null,
-    viewModel: WasteViewModel? = null
+    wasteViewModel: WasteViewModel? = null,
+    sessionManager: SessionManager? = null
 ) {
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val scope = rememberCoroutineScope()
+
+
+    val context = LocalContext.current
+    val currentSessionManager = sessionManager ?: SessionManager(context)
 
     // Items del menú lateral
     val menuItems = listOf(
@@ -77,14 +84,42 @@ fun HomeScreenCompacta(
                         fontSize = 18.sp,
                         fontWeight = FontWeight.Bold
                     )
-                    Text(
-                        "Transforma tu reciclaje",
-                        color = Color.White.copy(alpha = 0.8f),
-                        fontSize = 12.sp
-                    )
+
+                    // Mostrar nombre del usuario si está logueado
+                    val userName = currentSessionManager.getUserName()
+                    val userEmail = currentSessionManager.getUserEmail()
+
+                    if (userName.isNotEmpty()) {
+                        Text(
+                            userName,
+                            color = Color.White,
+                            fontSize = 16.sp,
+                            fontWeight = FontWeight.Medium
+                        )
+                        Text(
+                            userEmail,
+                            color = Color.White.copy(alpha = 0.8f),
+                            fontSize = 12.sp
+                        )
+                    } else {
+                        Text(
+                            "Transforma tu reciclaje",
+                            color = Color.White.copy(alpha = 0.8f),
+                            fontSize = 12.sp
+                        )
+                    }
+
                     Spacer(modifier = Modifier.height(8.dp))
+
+                    val puntos by wasteViewModel?.puntosUsuario?.collectAsState() ?: remember { mutableStateOf(0) }
+                    val puntosTexto = if (currentSessionManager.isLoggedIn()) {
+                        "$puntos puntos"
+                    } else {
+                        "$puntos puntos (local)"
+                    }
+
                     Text(
-                        "${viewModel?.puntosUsuario?.value ?: 0} puntos",
+                        puntosTexto,
                         color = Color.White,
                         fontSize = 14.sp,
                         fontWeight = FontWeight.Bold
@@ -107,14 +142,11 @@ fun HomeScreenCompacta(
                             },
                             selected = false,
                             onClick = {
-                                // Cerrar drawer primero
                                 scope.launch {
                                     drawerState.close()
                                 }
-                                // Navegar a la pantalla correspondiente
                                 when (item.route) {
                                     "login_page" -> {
-                                        // Cerrar sesión - volver al login
                                         navController?.navigate(item.route) {
                                             popUpTo("home_page") { inclusive = true }
                                         }
@@ -137,7 +169,6 @@ fun HomeScreenCompacta(
             }
         }
     ) {
-
         Scaffold(
             topBar = {
                 TopAppBar(
@@ -277,5 +308,9 @@ fun HomeScreenCompacta(
 @Preview(name = "Compact", widthDp = 360, heightDp = 800)
 @Composable
 fun PreviewCompact() {
-    HomeScreenCompacta()
+    val context = androidx.compose.ui.platform.LocalContext.current
+    HomeScreenCompacta(
+        wasteViewModel = null,
+        sessionManager = SessionManager(context)
+    )
 }
